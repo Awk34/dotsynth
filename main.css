@@ -1,0 +1,70 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+body {
+	font-family: 'Open Sans';
+	margin: 0;
+	background-color: black;
+}
+body p {
+	position: absolute;
+	color: gray;
+	font-size: 5em;
+	margin-top: 0;
+}
+#help {
+	position: absolute;
+	right: 2%;
+	color: #006;
+}
+.popup {
+	position: absolute;
+	left: 5%;
+	top: 12%;
+	z-index: 1000;
+	display: inline-block;
+	font-size: 1em;
+	background: #999;
+	padding: 25px;
+	-moz-border-radius: 8px;
+	border-radius: 8px;
+	opacity: .8;
+}
+.popup ul {
+	margin: 0 0 0 0;
+}
+svg {
+	pointer-events: none;
+}
+svg > * {
+	pointer-events: all;
+}
+svg.dotsvg * {
+	transition: opacity .2s;
+}
+svg.dotsvg:not(.opened) .arc {
+	opacity: 0;
+	pointer-events: none;
+}
+svg.dotsvg.opened * {
+	opacity: 1;
+}
+svg.dotsvg .dotcenter {
+	opacity: 1;
+	pointer-events: all;
+}
+svg.connectionsvg * {
+	pointer-events: none;
+}
+svg.dotsvg text {
+	pointer-events: none;
+}
+text {
+	pointer-events: none !important;
+}
+* {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}

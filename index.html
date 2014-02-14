@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+	<head>
+		<title>.synth</title>
+		<link rel="stylesheet" href="main.css">
+		<link rel="icon" type="image/png" href="dotsynth_favicon_64.png">
+		<script src="globals.js" defer></script>
+		<script src="nodes.js" defer></script>
+		<script src="newdotmenu.js" defer></script>
+		<script src="connection.js" defer></script>
+		<script src="dot.js" defer></script>
+		<script src="main.js" defer></script>
+		<meta name="viewport" content="width=device-width, user-scalable=yes">
+	</head>
+	<body>
+		<p>.synth</p>
+		<p id="help" onclick="javascript:toggle('helptext')">?</p>
+		<div id="helptext" class="popup" style="display:none;" onclick="javascript:toggle('helptext')">
+			<u>Instructions</u><br>
+			Create Nodes:<br>
+			<ul>
+				<li>Tap blank screen space to bring up the new node menu</li>
+				<li>Tap a node on the menu to place it</li>
+			</ul>
+			Manipulate Nodes:<br>
+			<ul>
+				<li>Drag nodes across the screen to move them</li>
+				<li>Tap nodes to bring up their parameters</li>
+					<ul><li>Tap/Drag parameters to change them</li></ul>
+			</ul>
+			Link Nodes:<br>
+			<ul>
+				<li>Long-press and then drag from one node to another node to create a connection</li>
+					<ul><li>Start at output, drag to input</li></ul>
+			</ul>
+		</div>
+	</body>
+</html>
