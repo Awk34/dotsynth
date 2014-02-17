@@ -21,6 +21,7 @@
  * @param onHoldDragEnd A callback function for when the the interactions ends as a hold-drag
  */
 function addListeners(element, onTapStart, onHoldStart, onDragStart, onHoldDragStart, onDragMove, onHoldDragMove, onTapEnd, onHoldEnd, onDragEnd, onHoldDragEnd) {
+	var self = this;
 	//keep track of when this object has focus;
 	//don't let multiple interactions happen at once.
 	var hasFocus = false;
@@ -114,11 +115,13 @@ function addListeners(element, onTapStart, onHoldStart, onDragStart, onHoldDragS
 	if (this.mouseIsDown === undefined) this.mouseIsDown = false;
 	element.addEventListener('mousedown', function(e) {
 		//only begin an interaction if there is not already one occurring.
-		var left = e.buttons % 2 == 1;
-		var right = (e.buttons >> 1) % 2 == 1;
-		if (!hasFocus && (left || right) && !this.mouseIsDown) {
+		var left = e.button == 0;
+		var right = e.button == 2;
+		console.log(e);
+		console.log(left, right);
+		if (!hasFocus && (left ^ right) && !self.mouseIsDown) {
 			hasFocus = true;
-			this.mouseIsDown = true;
+			self.mouseIsDown = true;
 			var initialPos = {
 				x:e.pageX,
 				y:e.pageY
@@ -130,68 +133,61 @@ function addListeners(element, onTapStart, onHoldStart, onDragStart, onHoldDragS
 				//if enough time passes, hold starts
 				hold = true;
 				if (onHoldStart) onHoldStart();
-			}, TAP_TIMEOUT);
-			function onTouchMove(e) {
-				var targetTouch = findTouch(touchId, e.changedTouches);
-				//only proceed if this event is related to the pointer we are tracking.
-				if (targetTouch !== null) {
-					if (!drag) {
-						//test for dragging
-						var dx = pxToMm(targetTouch.pageX - initialPos.x);
-						var dy = pxToMm(targetTouch.pageY - initialPos.y);
-						
-						//check if exited dragbox
-						if ( Math.abs(dy) > DRAG_BOX_SIZE/2 || Math.abs(dx) > DRAG_BOX_SIZE/2 ) {
-							drag = true;
-							clearTimeout(touchTime);
-							//begin drag effects
-							if (hold) {
-								//begin hold drag
-								if (onHoldDragStart) onHoldDragStart();
-							} else {
-								//begin normal drag
-								if (onDragStart) onDragStart();
-							}
-						}
-					} else {
-						//drag
+			}, (right ? 0 : TAP_TIMEOUT));
+			function onMouseMove(e) {
+				if (!drag) {
+					//test for dragging
+					var dx = pxToMm(e.pageX - initialPos.x);
+					var dy = pxToMm(e.pageY - initialPos.y);
+					
+					//check if exited dragbox
+					if ( Math.abs(dy) > DRAG_BOX_SIZE/2 || Math.abs(dx) > DRAG_BOX_SIZE/2 ) {
+						drag = true;
+						clearTimeout(touchTime);
+						//begin drag effects
 						if (hold) {
-							if (onHoldDragMove) onHoldDragMove();
+							//begin hold drag
+							if (onHoldDragStart) onHoldDragStart();
 						} else {
-							if (onDragMove) onDragMove();
+							//begin normal drag
+							if (onDragStart) onDragStart();
 						}
 					}
-					e.preventDefault();
-				}
-			}
-			function onTouchEnd(e) {
-				var targetTouch = findTouch(touchId, e.changedTouches);
-				if (targetTouch !== null) {
-					touchId = null;
-					hasFocus = false;
-					clearTimeout(touchTime);
-					if (drag) {
-						//drag
-						if (hold) {
-							if (onHoldDragEnd) onHoldDragEnd();
-						} else {
-							if (onDragEnd) onDragEnd();
-						}
+				} else {
+					//drag
+					if (hold) {
+						if (onHoldDragMove) onHoldDragMove();
 					} else {
-						//non-drag
-						if (hold) {
-							if (onHoldEnd) onHoldEnd();
-						} else {
-							if (onTapEnd) onTapEnd();
-						}
+						if (onDragMove) onDragMove();
 					}
-					document.removeEventListener('touchmove', onTouchMove);
-					document.removeEventListener('touchend', onTouchEnd);
-					e.preventDefault();
 				}
+				e.preventDefault();
 			}
-			document.addEventListener('touchmove', onTouchMove);
-			document.addEventListener('touchend', onTouchEnd);
+			function onMouseUp(e) {
+				hasFocus = false;
+				self.mouseIsDown = false;
+				clearTimeout(touchTime);
+				if (drag) {
+					//drag
+					if (hold) {
+						if (onHoldDragEnd) onHoldDragEnd();
+					} else {
+						if (onDragEnd) onDragEnd();
+					}
+				} else {
+					//non-drag
+					if (hold) {
+						if (onHoldEnd) onHoldEnd();
+					} else {
+						if (onTapEnd) onTapEnd();
+					}
+				}
+				document.removeEventListener('mousemove', onMouseMove);
+				document.removeEventListener('mouseup', onMouseUp);
+				e.preventDefault();
+			}
+			document.addEventListener('mousemove', onMouseMove);
+			document.addEventListener('mouseup', onMouseUp);
 			//only stop propagation on interaction start (indicating that this event has been 'captured');
 			e.stopPropagation();
 			e.preventDefault();
