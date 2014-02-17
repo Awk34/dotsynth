@@ -7,20 +7,31 @@
  *
  * @param element The element to add the listeners to
  *
- * @param onTapStart A callback function for when the interaction begins
- * @param onHoldStart A callback function for when the interaction becomes a hold
- * @param onDragStart A callback function for when the interaction becomes a drag (not a hold-drag)
- * @param onHoldDragStart A callback function for when the interaction becomes a hold-drag
- *
- * @param onDragMove A callback function for when the interaction is a drag (not a hold-drag), and moved
- * @param onHoldDragMove A callback function for when the interaction is a hold-drag, and moved
- *
- * @param onTapEnd A callback function for when the the interactions ends as a tap
- * @param onHoldEnd A callback function for when the the interactions ends as a hold
- * @param onDragEnd A callback function for when the the interactions ends as a drag (not a hold-drag)
- * @param onHoldDragEnd A callback function for when the the interactions ends as a hold-drag
+ * @param listeners An object that has all of the listeners to be added:
+ * 		@param onTapStart A callback function for when the interaction begins
+ * 		@param onHoldStart A callback function for when the interaction becomes a hold
+ * 		@param onDragStart A callback function for when the interaction becomes a drag (not a hold-drag)
+ * 		@param onHoldDragStart A callback function for when the interaction becomes a hold-drag
+ *		
+ * 		@param onDragMove A callback function for when the interaction is a drag (not a hold-drag), and moved
+ * 		@param onHoldDragMove A callback function for when the interaction is a hold-drag, and moved
+ *		
+ * 		@param onTapEnd A callback function for when the the interactions ends as a tap
+ * 		@param onHoldEnd A callback function for when the the interactions ends as a hold
+ * 		@param onDragEnd A callback function for when the the interactions ends as a drag (not a hold-drag)
+ * 		@param onHoldDragEnd A callback function for when the the interactions ends as a hold-drag
  */
-function addListeners(element, onTapStart, onHoldStart, onDragStart, onHoldDragStart, onDragMove, onHoldDragMove, onTapEnd, onHoldEnd, onDragEnd, onHoldDragEnd) {
+function addListeners(element, listeners) {
+	var onTapStart = listeners.onTapStart;
+	var onHoldStart = listeners.onHoldStart;
+	var onDragStart = listeners.onDragStart;
+	var onHoldDragStart = listeners.onHoldDragStart;
+	var onDragMove = listeners.onDragMove;
+	var onHoldDragMove = listeners.onHoldDragMove;
+	var onTapEnd = listeners.onTapEnd;
+	var onHoldEnd = listeners.onHoldEnd;
+	var onDragEnd = listeners.onDragEnd;
+	var onHoldDragEnd = listeners.onHoldDragEnd;
 	var self = this;
 	//keep track of when this object has focus;
 	//don't let multiple interactions happen at once.
