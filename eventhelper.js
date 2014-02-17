@@ -8,18 +8,18 @@
  * @param element The element to add the listeners to
  *
  * @param listeners An object that has all of the listeners to be added:
- * 		@param onTapStart A callback function for when the interaction begins
- * 		@param onHoldStart A callback function for when the interaction becomes a hold
- * 		@param onDragStart A callback function for when the interaction becomes a drag (not a hold-drag)
- * 		@param onHoldDragStart A callback function for when the interaction becomes a hold-drag
+ * 		onTapStart      A callback function for when the interaction begins
+ * 		onHoldStart     A callback function for when the interaction becomes a hold
+ * 		onDragStart     A callback function for when the interaction becomes a drag (not a hold-drag)
+ * 		onHoldDragStart A callback function for when the interaction becomes a hold-drag
  *		
- * 		@param onDragMove A callback function for when the interaction is a drag (not a hold-drag), and moved
- * 		@param onHoldDragMove A callback function for when the interaction is a hold-drag, and moved
+ * 		onDragMove      A callback function for when the interaction is a drag (not a hold-drag), and moved
+ * 		onHoldDragMove  A callback function for when the interaction is a hold-drag, and moved
  *		
- * 		@param onTapEnd A callback function for when the the interactions ends as a tap
- * 		@param onHoldEnd A callback function for when the the interactions ends as a hold
- * 		@param onDragEnd A callback function for when the the interactions ends as a drag (not a hold-drag)
- * 		@param onHoldDragEnd A callback function for when the the interactions ends as a hold-drag
+ * 		onTapEnd        A callback function for when the the interactions ends as a tap
+ * 		onHoldEnd       A callback function for when the the interactions ends as a hold
+ * 		onDragEnd       A callback function for when the the interactions ends as a drag (not a hold-drag)
+ * 		onHoldDragEnd   A callback function for when the the interactions ends as a hold-drag
  */
 function addListeners(element, listeners) {
 	var onTapStart = listeners.onTapStart;
@@ -128,8 +128,6 @@ function addListeners(element, listeners) {
 		//only begin an interaction if there is not already one occurring.
 		var left = e.button == 0;
 		var right = e.button == 2;
-		console.log(e);
-		console.log(left, right);
 		if (!hasFocus && (left ^ right) && !self.mouseIsDown) {
 			hasFocus = true;
 			self.mouseIsDown = true;
