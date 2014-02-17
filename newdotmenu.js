@@ -1,6 +1,5 @@
 var newDotMenu = document.createElementNS(NS, 'svg');
-newDotMenu.style.display = "none";
-newDotMenu.style.position = "absolute";
+newDotMenu.classList.add('newDotMenu');
 document.body.appendChild(newDotMenu);
 var isVisible = false;
 

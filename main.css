@@ -78,3 +78,7 @@ text {
 	left: 0;
 	pointer-events: none;
 }
+.newDotMenu {
+	position: absolute;
+	display: none;
+}
