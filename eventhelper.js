@@ -44,6 +44,7 @@ function addListeners(element, listeners) {
 			hasFocus = true;
 			var targetTouch = e.targetTouches[0];
 			var returnEvent = {
+				element: element,
 				pxX: targetTouch.pageX,
 				pxY: targetTouch.pageY,
 				mmX: pxToMm(targetTouch.pageX),
@@ -67,6 +68,7 @@ function addListeners(element, listeners) {
 				//only proceed if this event is related to the pointer we are tracking.
 				if (targetTouch !== null) {
 					var returnEvent = {
+						element: element,
 						pxX: targetTouch.pageX,
 						pxY: targetTouch.pageY,
 						mmX: pxToMm(targetTouch.pageX),
@@ -106,6 +108,7 @@ function addListeners(element, listeners) {
 				var targetTouch = findTouch(touchId, e.changedTouches);
 				if (targetTouch !== null) {
 					var returnEvent = {
+						element: element,
 						pxX: targetTouch.pageX,
 						pxY: targetTouch.pageY,
 						mmX: pxToMm(targetTouch.pageX),
@@ -152,6 +155,7 @@ function addListeners(element, listeners) {
 		var right = e.button == 2;
 		if (!hasFocus && (left ^ right) && !self.mouseIsDown) {
 			var returnEvent = {
+				element: element,
 				pxX: e.pageX,
 				pxY: e.pageY,
 				mmX: pxToMm(e.pageX),
@@ -173,6 +177,7 @@ function addListeners(element, listeners) {
 			}, (right ? 0 : TAP_TIMEOUT));
 			function onMouseMove(e) {
 				var returnEvent = {
+					element: element,
 					pxX: e.pageX,
 					pxY: e.pageY,
 					mmX: pxToMm(e.pageX),
@@ -209,6 +214,7 @@ function addListeners(element, listeners) {
 			}
 			function onMouseUp(e) {
 				var returnEvent = {
+					element: element,
 					pxX: e.pageX,
 					pxY: e.pageY,
 					mmX: pxToMm(e.pageX),
