@@ -263,6 +263,13 @@ function addListeners(element, listeners) {
 			e.preventDefault();
 		}
 	});
+	
+	//stop the context menu from appearing on right-clicks
+	element.addEventListener('contextmenu', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		return false;
+	});
 }
 
 /**
