@@ -80,5 +80,7 @@ text {
 }
 .newDotMenu {
 	position: absolute;
+}
+.newDotMenu.hidden {
 	display: none;
 }

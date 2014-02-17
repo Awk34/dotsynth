@@ -1,135 +1,11 @@
-var newDotMenu = document.createElementNS(NS, 'svg');
-newDotMenu.classList.add('newDotMenu');
-document.body.appendChild(newDotMenu);
-var isVisible = false;
-
-//TOUCH
-	var touchId = null;
-	function onTouchStart(e) {
-		if (touchId == null) {
-			var targetTouch = e.targetTouches[0];
-			touchId = targetTouch.identifier;
-			document.addEventListener('touchmove', onTouchMove);
-			document.addEventListener('touchend', onTouchEnd);
-			var initialPos = {
-				x:targetTouch.pageX,
-				y:targetTouch.pageY
-			}
-			var hold = false;
-			var drag = false;
-			var touchTime = setTimeout(function() {
-				hold = true;
-				//TODO: hold effect
-				navigator.vibrate(HOLD_EFFECT_VIBRATE_TIME);
-				console.log('begin hold!');
-			}, TAP_TIMEOUT);
-			e.preventDefault();
-		}
-		function onTouchMove(e) {
-			var targetTouch = findTouch(touchId, e.changedTouches);
-			if (targetTouch !== null) {
-				if (!drag) {
-					//test for dragging
-					var dx = pxToMm(targetTouch.pageX - initialPos.x)
-					var dy = pxToMm(targetTouch.pageY - initialPos.y)
-					
-					//check if exited dragbox
-					if ( Math.abs(dy) > DRAG_BOX_SIZE/2 || Math.abs(dx) > DRAG_BOX_SIZE/2 ) {
-						drag = true;
-						clearTimeout(touchTime);
-						//TODO: begin drag effects
-						console.log('begin drag!');
-						if (hold) {
-							//begin hold drag
-							conn = new connection(selfDot);
-						} else {
-							//begin normal drag
-						}
-					}
-				} else {
-					//drag stuffs
-					if (hold) {
-						//TODO: middle of hold drag
-						conn.endAt(pxToMm(targetTouch.pageX), pxToMm(targetTouch.pageY));
-					} else {
-						//TODO: middle of normal drag
-						//move dot
-						selfDot.x = pxToMm(targetTouch.pageX);
-						selfDot.y = pxToMm(targetTouch.pageY);
-					}
-				}
-				e.preventDefault();
-			}
-		}
-		function onTouchEnd(e) {
-			var targetTouch = findTouch(touchId, e.changedTouches);
-			if (targetTouch !== null) {
-				touchId = null;
-				clearTimeout(touchTime);
-				if (drag) {
-					if (hold) {
-						//TODO: end of hold drag
-						conn.finalize(document.elementFromPoint(targetTouch.clientX, targetTouch.clientY));
-					} else {
-						//TODO: end of normal drag
-					}
-				} else { // tap / hold
-					if (hold) {
-						//TODO: end of hold
-					} else {
-						//TODO: end of tap
-						selfDot.toggle();
-					}
-				}
-				document.removeEventListener('touchmove', onTouchMove);
-				document.removeEventListener('touchend', onTouchEnd);
-				e.preventDefault();
-			}
-			//if dot is over trash can, delete it?
-			// else if() {
-
-			// }
-		}
-	}
-	this.centerElement.addEventListener('touchstart', onTouchStart);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-document.addEventListener('mousedown', function(e) {
-	
-});
-document.addEventListener('mousemove', function(e) {
-	
-});
-document.addEventListener('mouseup', function(e) {
-	
-});
-
-document.addEventListener('click', function(e) {
-	if (e.target.parentElement !== null) return;
-	var x = e.pageX;
-	var y = e.pageY;
-	if (isVisible) {
-		isVisible = false;
-		newDotMenu.style.display = "none";
-		newDotMenu.style.visibility = "hidden";
-	} else {
-		isVisible = true;
-		newDotMenu.style.display = "block";
-		newDotMenu.innerHTML = '';
+addListeners(document, {onHoldStart: function(e) {
+	var self = this;
+	this.isVisible = false;
+	if (this.newDotMenu == undefined) {
+		//first-time set-up
+		this.newDotMenu = document.createElementNS(NS, 'svg');
+		this.newDotMenu.classList.add('newDotMenu');
+		document.body.appendChild(this.newDotMenu);
 		//recreate this menu
 		var radius = layerRadius(DOT_LIST.length);
 		var size = (radius + DOT_RADIUS + GAP_WIDTH)*2;
@@ -139,8 +15,6 @@ document.addEventListener('click', function(e) {
 		newDotMenu.setAttributeNS(null, 'width', size + UNITS);
 		newDotMenu.setAttributeNS(null, 'height', size + UNITS);
 		newDotMenu.setAttributeNS(null, 'viewBox', '0 0 ' + size + ' ' + size);
-		newDotMenu.style.left = x - newDotMenu.offsetWidth/2 + "px";
-		newDotMenu.style.top = y - newDotMenu.offsetHeight/2 + "px";
 		//add menu items
 		for (var i = 0; i < DOT_LIST.length; i++) {
 			var angle = 3*Math.PI/2 + 2*Math.PI * i/DOT_LIST.length;
@@ -148,8 +22,7 @@ document.addEventListener('click', function(e) {
 			var cx = size/2 + radius*Math.cos(angle);
 			var cy = size/2 + radius*Math.sin(angle);
 			
-			
-			
+			//label the circle
 			var name = document.createElementNS(NS, 'text');
 			name.setAttributeNS(null, 'x', cx);
 			name.setAttributeNS(null, 'y', cy);
@@ -159,36 +32,39 @@ document.addEventListener('click', function(e) {
 			name.setAttributeNS(null, 'fill', 'black');
 			name.innerHTML = DOT_LIST[i].shortName;
 			
-			
-			
-			
+			//create the circle
 			circle.setAttributeNS(null, 'cx', cx);
 			circle.setAttributeNS(null, 'cy', cy);
 			circle.setAttributeNS(null, 'r', DOT_RADIUS);
 			circle.setAttributeNS(null, 'fill', 'hsla(' + DOT_LIST[i].hue + ', 100%, ' + DOT_LIGHTNESS + ', 1)');
 			circle.dotDefinition = DOT_LIST[i];
-			circle.addEventListener('click', function() {
-				e.stopPropagation();
-				e.preventDefault();
-				x = pxToMm(x);
-				y = pxToMm(y);
-				
-				var definition = this.dotDefinition;
-				new dot(definition, x, y);
-				
-				setTimeout(function(){
-					isVisible = false;
-					newDotMenu.style.display = "none";
-					newDotMenu.style.visibility = "hidden";
-				},0);
-			});
+			addListeners(circle, {onTapStart: function(e) {
+				new dot(this.dotDefinition, e.mmX, e.mmY);
+				self.isVisible = false;
+				newDotMenu.classList.add('hidden');
+			}});
 			newDotMenu.appendChild(circle);
 			newDotMenu.appendChild(name);
 		}
-		newDotMenu.style.visibility = "visible";
+		newDotMenu.classList.add('hidden');
+	} //end first-time set-up
+	if (this.isVisible) {
+		this.isVisible = false;
+		newDotMenu.classList.add('hidden');
+	} else {
+		this.isVisible = true;
+		newDotMenu.classList.remove('hidden');
+		//TODO: make it show properly!
+		newDotMenu.style.left = e.pxX - newDotMenu.offsetWidth/2 + "px";
+		newDotMenu.style.top = e.pxY - newDotMenu.offsetHeight/2 + "px";
 	}
-});
+}});
 
+/**
+ * Helper function. Determines the ideal radius of a circle of dots
+ *
+ * @param layer the number of dots in the circle
+ */
 function layerRadius(layer) {
 	return Math.max(
 		(DOT_RADIUS+GAP_WIDTH)/(Math.cos( (Math.PI*(layer-2)) / (2*layer) )),

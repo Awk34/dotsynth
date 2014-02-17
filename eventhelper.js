@@ -1,6 +1,7 @@
 /**
  * A helper function used to add all listeners at once to an element. Additionally, it handles
- * touch AND mouse configurations. All the callbacks take 1 argument, an event.
+ * touch AND mouse configurations. All the callbacks take 1 argument, an event. That event has
+ * a .pxX, .pxY, .mmX, and .mmY.
  *
  * All interactions are assumed to be linked to the pointer/cursor/finger that began the event.
  * i.e.: Once the event begins, no other element is able to use the interactions of that finger
@@ -42,23 +43,35 @@ function addListeners(element, listeners) {
 		if (!hasFocus) {
 			hasFocus = true;
 			var targetTouch = e.targetTouches[0];
+			var returnEvent = {
+				pxX: targetTouch.pageX,
+				pxY: targetTouch.pageY,
+				mmX: pxToMm(targetTouch.pageX),
+				mmY: pxToMm(targetTouch.pageY)
+			}
 			touchId = targetTouch.identifier;
 			var initialPos = {
 				x:targetTouch.pageX,
 				y:targetTouch.pageY
 			}
-			if (onTapStart) onTapStart();
+			if (onTapStart) onTapStart(returnEvent);
 			var hold = false;
 			var drag = false;
 			var touchTime = setTimeout(function() {
 				//if enough time passes, hold starts
 				hold = true;
-				if (onHoldStart) onHoldStart();
+				if (onHoldStart) onHoldStart(returnEvent);
 			}, TAP_TIMEOUT);
 			function onTouchMove(e) {
 				var targetTouch = findTouch(touchId, e.changedTouches);
 				//only proceed if this event is related to the pointer we are tracking.
 				if (targetTouch !== null) {
+					var returnEvent = {
+						pxX: targetTouch.pageX,
+						pxY: targetTouch.pageY,
+						mmX: pxToMm(targetTouch.pageX),
+						mmY: pxToMm(targetTouch.pageY)
+					}
 					if (!drag) {
 						//test for dragging
 						var dx = pxToMm(targetTouch.pageX - initialPos.x);
@@ -71,18 +84,19 @@ function addListeners(element, listeners) {
 							//begin drag effects
 							if (hold) {
 								//begin hold drag
-								if (onHoldDragStart) onHoldDragStart();
+								if (onHoldDragStart) onHoldDragStart(returnEvent);
 							} else {
 								//begin normal drag
-								if (onDragStart) onDragStart();
+								if (onDragStart) onDragStart(returnEvent);
 							}
 						}
 					} else {
 						//drag
 						if (hold) {
-							if (onHoldDragMove) onHoldDragMove();
+							if (onHoldDragMove) onHoldDragMove(returnEvent);
+							else if (onDragMove) onDragMove(returnEvent);
 						} else {
-							if (onDragMove) onDragMove();
+							if (onDragMove) onDragMove(returnEvent);
 						}
 					}
 					e.preventDefault();
@@ -91,22 +105,30 @@ function addListeners(element, listeners) {
 			function onTouchEnd(e) {
 				var targetTouch = findTouch(touchId, e.changedTouches);
 				if (targetTouch !== null) {
+					var returnEvent = {
+						pxX: targetTouch.pageX,
+						pxY: targetTouch.pageY,
+						mmX: pxToMm(targetTouch.pageX),
+						mmY: pxToMm(targetTouch.pageY)
+					}
 					touchId = null;
 					hasFocus = false;
 					clearTimeout(touchTime);
 					if (drag) {
 						//drag
 						if (hold) {
-							if (onHoldDragEnd) onHoldDragEnd();
+							if (onHoldDragEnd) onHoldDragEnd(returnEvent);
+							else if (onDragEnd) onDragEnd(returnEvent);
 						} else {
-							if (onDragEnd) onDragEnd();
+							if (onDragEnd) onDragEnd(returnEvent);
 						}
 					} else {
 						//non-drag
 						if (hold) {
-							if (onHoldEnd) onHoldEnd();
+							if (onHoldEnd) onHoldEnd(returnEvent);
+							else if (onTapEnd) onTapEnd(returnEvent);
 						} else {
-							if (onTapEnd) onTapEnd();
+							if (onTapEnd) onTapEnd(returnEvent);
 						}
 					}
 					document.removeEventListener('touchmove', onTouchMove);
@@ -129,21 +151,33 @@ function addListeners(element, listeners) {
 		var left = e.button == 0;
 		var right = e.button == 2;
 		if (!hasFocus && (left ^ right) && !self.mouseIsDown) {
+			var returnEvent = {
+				pxX: e.pageX,
+				pxY: e.pageY,
+				mmX: pxToMm(e.pageX),
+				mmY: pxToMm(e.pageY)
+			}
 			hasFocus = true;
 			self.mouseIsDown = true;
 			var initialPos = {
 				x:e.pageX,
 				y:e.pageY
 			}
-			if (onTapStart) onTapStart();
+			if (onTapStart) onTapStart(returnEvent);
 			var hold = false;
 			var drag = false;
 			var touchTime = setTimeout(function() {
 				//if enough time passes, hold starts
 				hold = true;
-				if (onHoldStart) onHoldStart();
+				if (onHoldStart) onHoldStart(returnEvent);
 			}, (right ? 0 : TAP_TIMEOUT));
 			function onMouseMove(e) {
+				var returnEvent = {
+					pxX: e.pageX,
+					pxY: e.pageY,
+					mmX: pxToMm(e.pageX),
+					mmY: pxToMm(e.pageY)
+				}
 				if (!drag) {
 					//test for dragging
 					var dx = pxToMm(e.pageX - initialPos.x);
@@ -156,39 +190,48 @@ function addListeners(element, listeners) {
 						//begin drag effects
 						if (hold) {
 							//begin hold drag
-							if (onHoldDragStart) onHoldDragStart();
+							if (onHoldDragStart) onHoldDragStart(returnEvent);
 						} else {
 							//begin normal drag
-							if (onDragStart) onDragStart();
+							if (onDragStart) onDragStart(returnEvent);
 						}
 					}
 				} else {
 					//drag
 					if (hold) {
-						if (onHoldDragMove) onHoldDragMove();
+						if (onHoldDragMove) onHoldDragMove(returnEvent);
+						else if (onDragMove) onDragMove(returnEvent);
 					} else {
-						if (onDragMove) onDragMove();
+						if (onDragMove) onDragMove(returnEvent);
 					}
 				}
 				e.preventDefault();
 			}
 			function onMouseUp(e) {
+				var returnEvent = {
+					pxX: e.pageX,
+					pxY: e.pageY,
+					mmX: pxToMm(e.pageX),
+					mmY: pxToMm(e.pageY)
+				}
 				hasFocus = false;
 				self.mouseIsDown = false;
 				clearTimeout(touchTime);
 				if (drag) {
 					//drag
 					if (hold) {
-						if (onHoldDragEnd) onHoldDragEnd();
+						if (onHoldDragEnd) onHoldDragEnd(returnEvent);
+						else if (onDragEnd) onDragEnd(returnEvent);
 					} else {
-						if (onDragEnd) onDragEnd();
+						if (onDragEnd) onDragEnd(returnEvent);
 					}
 				} else {
 					//non-drag
 					if (hold) {
-						if (onHoldEnd) onHoldEnd();
+						if (onHoldEnd) onHoldEnd(returnEvent);
+						else if (onTapEnd) onTapEnd(returnEvent);
 					} else {
-						if (onTapEnd) onTapEnd();
+						if (onTapEnd) onTapEnd(returnEvent);
 					}
 				}
 				document.removeEventListener('mousemove', onMouseMove);
