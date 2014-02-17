@@ -393,23 +393,14 @@ function dot(definition, x, y) {
 		
 		//MOUSE
 		this.pathElement.addEventListener('mousedown', function() {
+			
 		});
 		this.pathElement.addEventListener('mousemove', function() {
+			
 		});
 		this.pathElement.addEventListener('mouseup', function() {
+			
 		});
-	}
-	
-	/**
-	 * helper funcs for mm to px and px to mm
-	 *
-	 * MUST be in dot. uses svg for reference
-	 */
-	function mmToPx(val) {
-		return val * selfDot.svgElement.offsetHeight / SVG_SIZE;
-	}
-	function pxToMm(val) {
-		return val / ( selfDot.svgElement.offsetHeight / SVG_SIZE );
 	}
 }
 
@@ -423,15 +414,4 @@ function positionOf(element) {
 	position.x += element.offsetLeft;
 	position.y += element.offsetTop;
 	return position;
-}
-
-/**
- * Finds and returns a Touch of id from list
- */
-function findTouch(id, list) {
-	for (var i = 0; i < list.length; i++) {
-		if (list[i].identifier === id)
-			return list[i];
-	}
-	return null;
 }
