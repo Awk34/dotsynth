@@ -48,7 +48,9 @@ function addListeners(element, listeners) {
 				pxX: targetTouch.pageX,
 				pxY: targetTouch.pageY,
 				mmX: pxToMm(targetTouch.pageX),
-				mmY: pxToMm(targetTouch.pageY)
+				mmY: pxToMm(targetTouch.pageY),
+				clientX: targetTouch.clientX,
+				clientY: targetTouch.clientY
 			}
 			touchId = targetTouch.identifier;
 			var initialPos = {
@@ -72,7 +74,9 @@ function addListeners(element, listeners) {
 						pxX: targetTouch.pageX,
 						pxY: targetTouch.pageY,
 						mmX: pxToMm(targetTouch.pageX),
-						mmY: pxToMm(targetTouch.pageY)
+						mmY: pxToMm(targetTouch.pageY),
+						clientX: targetTouch.clientX,
+						clientY: targetTouch.clientY
 					}
 					if (!drag) {
 						//test for dragging
@@ -112,7 +116,9 @@ function addListeners(element, listeners) {
 						pxX: targetTouch.pageX,
 						pxY: targetTouch.pageY,
 						mmX: pxToMm(targetTouch.pageX),
-						mmY: pxToMm(targetTouch.pageY)
+						mmY: pxToMm(targetTouch.pageY),
+						clientX: targetTouch.clientX,
+						clientY: targetTouch.clientY
 					}
 					touchId = null;
 					hasFocus = false;
@@ -159,7 +165,9 @@ function addListeners(element, listeners) {
 				pxX: e.pageX,
 				pxY: e.pageY,
 				mmX: pxToMm(e.pageX),
-				mmY: pxToMm(e.pageY)
+				mmY: pxToMm(e.pageY),
+				clientX: e.clientX,
+				clientY: e.clientY
 			}
 			hasFocus = true;
 			self.mouseIsDown = true;
@@ -181,7 +189,9 @@ function addListeners(element, listeners) {
 					pxX: e.pageX,
 					pxY: e.pageY,
 					mmX: pxToMm(e.pageX),
-					mmY: pxToMm(e.pageY)
+					mmY: pxToMm(e.pageY),
+					clientX: e.clientX,
+					clientY: e.clientY
 				}
 				if (!drag) {
 					//test for dragging
@@ -218,7 +228,9 @@ function addListeners(element, listeners) {
 					pxX: e.pageX,
 					pxY: e.pageY,
 					mmX: pxToMm(e.pageX),
-					mmY: pxToMm(e.pageY)
+					mmY: pxToMm(e.pageY),
+					clientX: e.clientX,
+					clientY: e.clientY
 				}
 				hasFocus = false;
 				self.mouseIsDown = false;

@@ -93,104 +93,21 @@ function dot(definition, x, y) {
 		if (isOpen) selfDot.close();
 		else selfDot.open();
 	}
-	//TOUCH
-	var touchId = null;
-	function onTouchStart(e) {
-		if (touchId == null) {
-			var targetTouch = e.targetTouches[0];
-			touchId = targetTouch.identifier;
-			console.log('begin touch!');
-			document.addEventListener('touchmove', onTouchMove);
-			document.addEventListener('touchend', onTouchEnd);
-			var initialPos = {
-				x:targetTouch.pageX,
-				y:targetTouch.pageY
-			}
-			var hold = false;
-			var drag = false;
-			var conn = null;
-			var touchTime = setTimeout(function() {
-				hold = true;
-				//TODO: hold effect
-				navigator.vibrate(HOLD_EFFECT_VIBRATE_TIME);
-				console.log('begin hold!');
-			}, TAP_TIMEOUT);
-			e.preventDefault();
-		}
-		function onTouchMove(e) {
-			var targetTouch = findTouch(touchId, e.changedTouches);
-			if (targetTouch !== null) {
-				if (!drag) {
-					//test for dragging
-					var dx = pxToMm(targetTouch.pageX - initialPos.x)
-					var dy = pxToMm(targetTouch.pageY - initialPos.y)
-					
-					//check if exited dragbox
-					if ( Math.abs(dy) > DRAG_BOX_SIZE/2 || Math.abs(dx) > DRAG_BOX_SIZE/2 ) {
-						drag = true;
-						clearTimeout(touchTime);
-						//TODO: begin drag effects
-						console.log('begin drag!');
-						if (hold) {
-							//begin hold drag
-							conn = new connection(selfDot);
-						} else {
-							//begin normal drag
-						}
-					}
-				} else {
-					//drag stuffs
-					if (hold) {
-						//TODO: middle of hold drag
-						conn.endAt(pxToMm(targetTouch.pageX), pxToMm(targetTouch.pageY));
-					} else {
-						//TODO: middle of normal drag
-						//move dot
-						selfDot.x = pxToMm(targetTouch.pageX);
-						selfDot.y = pxToMm(targetTouch.pageY);
-					}
-				}
-				e.preventDefault();
-			}
-		}
-		function onTouchEnd(e) {
-			var targetTouch = findTouch(touchId, e.changedTouches);
-			if (targetTouch !== null) {
-				touchId = null;
-				clearTimeout(touchTime);
-				if (drag) {
-					if (hold) {
-						//TODO: end of hold drag
-						conn.finalize(document.elementFromPoint(targetTouch.clientX, targetTouch.clientY));
-					} else {
-						//TODO: end of normal drag
-					}
-				} else { // tap / hold
-					if (hold) {
-						//TODO: end of hold
-					} else {
-						//TODO: end of tap
-						selfDot.toggle();
-					}
-				}
-				document.removeEventListener('touchmove', onTouchMove);
-				document.removeEventListener('touchend', onTouchEnd);
-				e.preventDefault();
-			}
-			//if dot is over trash can, delete it?
-			// else if() {
-
-			// }
-		}
-	}
-	this.centerElement.addEventListener('touchstart', onTouchStart);
 	
-	//MOUSE
-	this.centerElement.addEventListener('mousedown', function() {
-	});
-	this.centerElement.addEventListener('mousemove', function() {
-	});
-	this.centerElement.addEventListener('mouseup', function() {
+	//events
+	var conn = null;
+	addListeners(this.centerElement, {
+		onHoldStart: function(e) {navigator.vibrate(HOLD_EFFECT_VIBRATE_TIME);},
+		onHoldDragStart: function(e) {conn = new connection(selfDot);},
+		onHoldDragMove: function(e) {conn.endAt(e.mmX, e.mmY)},
+		onDragMove: function(e) {
+			selfDot.x = e.mmX;
+			selfDot.y = e.mmY;
+		},
+		onHoldDragEnd: function(e) {
+			conn.finalize(document.elementFromPoint(e.clientX, e.clientY))
+		},
+		onTapEnd: function(e) {selfDot.toggle();}
 	});
 	
 	function arc(parent, start, end, definition) {		
