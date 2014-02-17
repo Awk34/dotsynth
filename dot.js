@@ -275,48 +275,12 @@ function dot(definition, x, y) {
 			selfDot.node[selfArc.definition.name].value = selfArc.definition.scale(percent);
 			drawIndicator(percent);
 		}
-		//EVENTS FOR THE ARC
 		
-		//TOUCH
-		var touchId = null;
-		function onTouchStart(e) {
-			if (touchId == null) {
-				touchId = e.targetTouches[0].identifier;
-				targetTouch = e.targetTouches[0];
-				modifyValue(targetTouch.pageX, targetTouch.pageY);
-				document.addEventListener('touchmove', onTouchMove);
-				document.addEventListener('touchend', onTouchEnd);
-				e.preventDefault();
-			}
-			function onTouchMove(e) {
-				var targetTouch = findTouch(touchId, e.changedTouches);
-				if (targetTouch !== null) {
-					modifyValue(targetTouch.pageX, targetTouch.pageY);
-					e.preventDefault();
-				}
-			}
-			function onTouchEnd(e) {
-				var targetTouch = findTouch(touchId, e.changedTouches);
-				if (targetTouch !== null) {
-					touchId = null;
-					modifyValue(e.changedTouches[0].pageX, e.changedTouches[0].pageY);
-					document.removeEventListener('touchmove', onTouchMove);
-					document.removeEventListener('touchend', onTouchEnd);
-					e.preventDefault();
-				}
-			}
-		}
-		this.pathElement.addEventListener('touchstart', onTouchStart);
-		
-		//MOUSE
-		this.pathElement.addEventListener('mousedown', function() {
-			
-		});
-		this.pathElement.addEventListener('mousemove', function() {
-			
-		});
-		this.pathElement.addEventListener('mouseup', function() {
-			
+		//arc events
+		addListeners(this.pathElement, {
+			onTapStart: function(e) {modifyValue(e.pxX, e.pxY);},
+			onDragMove: function(e) {modifyValue(e.pxX, e.pxY);},
+			onTapEnd:   function(e) {modifyValue(e.pxX, e.pxY);}
 		});
 	}
 }
