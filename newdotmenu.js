@@ -1,20 +1,11 @@
-var newDotMenu = document.createElementNS(NS, 'svg');
-newDotMenu.style.display = "none";
-newDotMenu.style.position = "absolute";
-document.body.appendChild(newDotMenu);
-var isVisible = false;
-document.addEventListener('click', function(e) {
-	if (e.target.parentElement !== null) return;
-	var x = e.pageX;
-	var y = e.pageY;
-	if (isVisible) {
-		isVisible = false;
-		newDotMenu.style.display = "none";
-		newDotMenu.style.visibility = "hidden";
-	} else {
-		isVisible = true;
-		newDotMenu.style.display = "block";
-		newDotMenu.innerHTML = '';
+addListeners(document, {onHoldStart: function(e) {
+	var self = this;
+	this.isVisible = false;
+	if (this.newDotMenu == undefined) {
+		//first-time set-up
+		this.newDotMenu = document.createElementNS(NS, 'svg');
+		this.newDotMenu.classList.add('newDotMenu');
+		document.body.appendChild(this.newDotMenu);
 		//recreate this menu
 		var radius = layerRadius(DOT_LIST.length);
 		var size = (radius + DOT_RADIUS + GAP_WIDTH)*2;
@@ -24,8 +15,6 @@ document.addEventListener('click', function(e) {
 		newDotMenu.setAttributeNS(null, 'width', size + UNITS);
 		newDotMenu.setAttributeNS(null, 'height', size + UNITS);
 		newDotMenu.setAttributeNS(null, 'viewBox', '0 0 ' + size + ' ' + size);
-		newDotMenu.style.left = x - newDotMenu.offsetWidth/2 + "px";
-		newDotMenu.style.top = y - newDotMenu.offsetHeight/2 + "px";
 		//add menu items
 		for (var i = 0; i < DOT_LIST.length; i++) {
 			var angle = 3*Math.PI/2 + 2*Math.PI * i/DOT_LIST.length;
@@ -33,8 +22,7 @@ document.addEventListener('click', function(e) {
 			var cx = size/2 + radius*Math.cos(angle);
 			var cy = size/2 + radius*Math.sin(angle);
 			
-			
-			
+			//label the circle
 			var name = document.createElementNS(NS, 'text');
 			name.setAttributeNS(null, 'x', cx);
 			name.setAttributeNS(null, 'y', cy);
@@ -44,36 +32,39 @@ document.addEventListener('click', function(e) {
 			name.setAttributeNS(null, 'fill', 'black');
 			name.innerHTML = DOT_LIST[i].shortName;
 			
-			
-			
-			
+			//create the circle
 			circle.setAttributeNS(null, 'cx', cx);
 			circle.setAttributeNS(null, 'cy', cy);
 			circle.setAttributeNS(null, 'r', DOT_RADIUS);
 			circle.setAttributeNS(null, 'fill', 'hsla(' + DOT_LIST[i].hue + ', 100%, ' + DOT_LIGHTNESS + ', 1)');
 			circle.dotDefinition = DOT_LIST[i];
-			circle.addEventListener('click', function() {
-				e.stopPropagation();
-				e.preventDefault();
-				x = pxToMm(x);
-				y = pxToMm(y);
-				
-				var definition = this.dotDefinition;
-				new dot(definition, x, y);
-				
-				setTimeout(function(){
-					isVisible = false;
-					newDotMenu.style.display = "none";
-					newDotMenu.style.visibility = "hidden";
-				},0);
-			});
+			addListeners(circle, {onTapStart: function(e) {
+				new dot(e.element.dotDefinition, e.mmX, e.mmY);
+				self.isVisible = false;
+				newDotMenu.classList.add('hidden');
+			}});
 			newDotMenu.appendChild(circle);
 			newDotMenu.appendChild(name);
 		}
-		newDotMenu.style.visibility = "visible";
+		newDotMenu.classList.add('hidden');
+	} //end first-time set-up
+	if (this.isVisible) {
+		this.isVisible = false;
+		newDotMenu.classList.add('hidden');
+	} else {
+		this.isVisible = true;
+		newDotMenu.classList.remove('hidden');
+		//TODO: make it show properly!
+		newDotMenu.style.left = e.pxX - newDotMenu.offsetWidth/2 + "px";
+		newDotMenu.style.top = e.pxY - newDotMenu.offsetHeight/2 + "px";
 	}
-});
+}});
 
+/**
+ * Helper function. Determines the ideal radius of a circle of dots
+ *
+ * @param layer the number of dots in the circle
+ */
 function layerRadius(layer) {
 	return Math.max(
 		(DOT_RADIUS+GAP_WIDTH)/(Math.cos( (Math.PI*(layer-2)) / (2*layer) )),

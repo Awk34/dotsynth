@@ -68,3 +68,19 @@ text {
 	-ms-user-select: none;
 	user-select: none;
 }
+
+.unitReference {
+	position: absolute;
+	visibility: hidden;
+	width: 100mm;
+	height: 0;
+	top: 0;
+	left: 0;
+	pointer-events: none;
+}
+.newDotMenu {
+	position: absolute;
+}
+.newDotMenu.hidden {
+	display: none;
+}
