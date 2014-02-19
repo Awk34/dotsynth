@@ -11,3 +11,5 @@ function toggle(obj) {
 	else
 		el.style.display = 'none';
 }
+addListeners(helptext, {onTapEnd: function(){ helptext.classList.toggle('hidden'); }});
+addListeners(help, {onTapEnd: function(){ helptext.classList.toggle('hidden'); }});
