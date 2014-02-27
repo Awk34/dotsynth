@@ -101,8 +101,10 @@ function dot(definition, x, y) {
 		onHoldDragStart: function(e) {conn = new connection(selfDot);},
 		onHoldDragMove: function(e) {conn.endAt(e.mmX, e.mmY)},
 		onDragMove: function(e) {
+			Physics.remove(selfDot);
 			selfDot.x = e.mmX;
 			selfDot.y = e.mmY;
+			Physics.add(selfDot);
 		},
 		onHoldDragEnd: function(e) {
 			conn.finalize(document.elementFromPoint(e.clientX, e.clientY))
@@ -283,6 +285,7 @@ function dot(definition, x, y) {
 			onTapEnd:   function(e) {modifyValue(e.pxX, e.pxY);}
 		});
 	}
+	Physics.add(this);
 }
 
 
