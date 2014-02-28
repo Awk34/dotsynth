@@ -1,7 +1,9 @@
+var dotList = [];
 /**
  * Creates a new dot with all of its DOM elements
  */
 function dot(definition, x, y) {
+	dotList.push(this);
 	var selfDot = this;
 	var parent = this.parentElement = document.body;
 	this.definition = definition;
@@ -105,6 +107,12 @@ function dot(definition, x, y) {
 			selfDot.x = e.mmX;
 			selfDot.y = e.mmY;
 			Physics.add(selfDot);
+			//re-render the clipping paths for intersecting arcs
+			//TODO: move this to an area that is more generally
+			//      about the event "dots moved".
+			
+			
+			
 		},
 		onHoldDragEnd: function(e) {
 			conn.finalize(document.elementFromPoint(e.clientX, e.clientY))

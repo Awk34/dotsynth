@@ -28,10 +28,11 @@
 	
 	
 	function adjacentCandidates(x, y) {
-		var xMin = indexOf(x-DOT_PHYSICS_RADIUS*2);
-		var xMax = indexOf(x+DOT_PHYSICS_RADIUS*2);
-		var yMin = indexOf(y-DOT_PHYSICS_RADIUS*2);
-		var yMax = indexOf(y+DOT_PHYSICS_RADIUS*2);
+		var drawRadius = DOT_RADIUS + GAP_WIDTH + ARC_WIDTH + GAP_WIDTH/2;
+		var xMin = indexOf(x-drawRadius*2);
+		var xMax = indexOf(x+drawRadius*2);
+		var yMin = indexOf(y-drawRadius*2);
+		var yMax = indexOf(y+drawRadius*2);
 		var returnList = [];
 		for (var xi = xMin; xi <= xMax; xi++) {
 			for (var yi = yMin; yi <= yMax; yi++) {
@@ -68,9 +69,23 @@
 		if (getDotAtCoords(dot.x, dot.y) === dot)
 			setDotAtCoords(undefined, dot.x, dot.y);
 	}
-	
+	function adjacentDots(dot) {
+		var xMin = indexOf(x-DOT_RADIUS*2);
+		var xMax = indexOf(x+DOT_PHYSICS_RADIUS*2);
+		var yMin = indexOf(y-DOT_PHYSICS_RADIUS*2);
+		var yMax = indexOf(y+DOT_PHYSICS_RADIUS*2);
+		var returnList = [];
+		for (var xi = xMin; xi <= xMax; xi++) {
+			for (var yi = yMin; yi <= yMax; yi++) {
+				var other = getDotAtIndex(xi,yi);
+				if (other !== undefined && dot !== other)
+					returnList.push(other);
+			}
+		}
+	}
 	Physics = {
 		add: addDot,
-		remove: removeDot
+		remove: removeDot,
+		adjacentTo: adjacentDots
 	}
 })();
