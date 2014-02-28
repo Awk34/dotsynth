@@ -44,6 +44,8 @@ function dot(definition, x, y) {
 	this.y = y;
 	
 	//Center Dot
+	this.gElement = document.createElementNS(NS, 'g');
+	this.gElement.classList.add('centerWrapper');
 	this.centerElement = document.createElementNS(NS, 'circle');
 	this.centerElement.setAttributeNS(null, 'cx', SVG_SIZE/2);
 	this.centerElement.setAttributeNS(null, 'cy', SVG_SIZE/2);
@@ -68,7 +70,7 @@ function dot(definition, x, y) {
 		this.arcs.push(new arc(this.svgElement, startAngle, endAngle, paramList[i]));
 	}
 	
-	this.svgElement.appendChild(this.centerElement);
+	this.gElement.appendChild(this.centerElement);
 	
 	this.nameElement = document.createElementNS(NS, 'text');
 	this.nameElement.setAttributeNS(null, 'x', SVG_SIZE/2);
@@ -78,7 +80,9 @@ function dot(definition, x, y) {
 	this.nameElement.setAttributeNS(null, 'font-size', DOT_NAME_SIZE);
 	this.nameElement.setAttributeNS(null, 'fill', 'black');
 	this.nameElement.innerHTML = definition.shortName;
-	this.svgElement.appendChild(this.nameElement);
+	
+	this.gElement.appendChild(this.nameElement);
+	this.svgElement.appendChild(this.gElement);
 	
 	var isOpen = false;
 	this.open = function() {
@@ -126,6 +130,8 @@ function dot(definition, x, y) {
 		this.paramName = definition.name;
 		
 		var clipPathId = CLIP_PATH_ID++;
+		this.gElement = document.createElementNS(NS, 'g');
+		this.gElement.classList.add('arcWrapper');
 		this.pathElement = document.createElementNS(NS, 'path');
 		this.pathElement.classList.add('arc');
 		this.pathElement.setAttributeNS(null, 'stroke', 'hsla( 0, 0%, ' + EMPTY_ARC_LIGHTNESS + ', ' + EMPTY_ARC_ALPHA + ')');
@@ -216,10 +222,12 @@ function dot(definition, x, y) {
 		this.indicatorElement.setAttributeNS(null, 'clip-path', 'url(#doubleClip' + clipPathId + ')');
 		
 		
-		parent.appendChild(this.doubleClipPathElement);
-		parent.appendChild(this.pathElement);
-		parent.appendChild(this.indicatorElement);
-		parent.appendChild(this.clipPathElement);
+		this.gElement.appendChild(this.doubleClipPathElement);
+		this.gElement.appendChild(this.pathElement);
+		this.gElement.appendChild(this.indicatorElement);
+		this.gElement.appendChild(this.clipPathElement);
+		
+		parent.appendChild(this.gElement);
 		
 		function polarToCartesian(radius, angle, originX, originY) {
 			return {
