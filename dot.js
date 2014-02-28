@@ -44,8 +44,8 @@ function dot(definition, x, y) {
 	this.y = y;
 	
 	//Center Dot
-	this.gElement = document.createElementNS(NS, 'g');
-	this.gElement.classList.add('centerWrapper');
+	this.gCenterElement = document.createElementNS(NS, 'g');
+	this.gCenterElement.classList.add('centerWrapper');
 	this.centerElement = document.createElementNS(NS, 'circle');
 	this.centerElement.setAttributeNS(null, 'cx', SVG_SIZE/2);
 	this.centerElement.setAttributeNS(null, 'cy', SVG_SIZE/2);
@@ -57,6 +57,10 @@ function dot(definition, x, y) {
 	
 	//end Center Dot
 
+	this.gArcsElement = document.createElementNS(NS, 'g');
+	this.gArcsElement.classList.add('arcsWrapper');
+	this.svgElement.appendChild(this.gArcsElement);
+	
 	this.arcs = [];
 	
 	var paramList = definition.parameters
@@ -67,10 +71,11 @@ function dot(definition, x, y) {
 			startAngle += 2*Math.PI;
 			endAngle += 2*Math.PI;
 		}
-		this.arcs.push(new arc(this.svgElement, startAngle, endAngle, paramList[i]));
+		this.arcs.push(new arc(this.gArcsElement, startAngle, endAngle, paramList[i]));
+		
 	}
 	
-	this.gElement.appendChild(this.centerElement);
+	this.gCenterElement.appendChild(this.centerElement);
 	
 	this.nameElement = document.createElementNS(NS, 'text');
 	this.nameElement.setAttributeNS(null, 'x', SVG_SIZE/2);
@@ -81,8 +86,8 @@ function dot(definition, x, y) {
 	this.nameElement.setAttributeNS(null, 'fill', 'black');
 	this.nameElement.innerHTML = definition.shortName;
 	
-	this.gElement.appendChild(this.nameElement);
-	this.svgElement.appendChild(this.gElement);
+	this.gCenterElement.appendChild(this.nameElement);
+	this.svgElement.appendChild(this.gCenterElement);
 	
 	var isOpen = false;
 	this.open = function() {
