@@ -56,9 +56,14 @@ function dot(definition, x, y) {
 	this.centerElement.object = this;
 	
 	//end Center Dot
-
+	
+	this.arcsClipPath = document.createElementNS(NS, 'clipPath');
+	this.arcsClipPath.id = 'arcsClipPath' + CLIP_PATH_ID++;
+	this.svgElement.appendChild(this.arcsClipPath);
+	
 	this.gArcsElement = document.createElementNS(NS, 'g');
 	this.gArcsElement.classList.add('arcsWrapper');
+	this.gArcsElement.setAttributeNS(null, 'clip-path', "url(#" + this.arcsClipPath.id + ")");
 	this.svgElement.appendChild(this.gArcsElement);
 	
 	this.arcs = [];
@@ -119,9 +124,7 @@ function dot(definition, x, y) {
 			//re-render the clipping paths for intersecting arcs
 			//TODO: move this to an area that is more generally
 			//      about the event "dots moved".
-			
-			
-			
+			updateArcsClipPath();
 		},
 		onHoldDragEnd: function(e) {
 			conn.finalize(document.elementFromPoint(e.clientX, e.clientY))
@@ -307,6 +310,28 @@ function dot(definition, x, y) {
 		});
 	}
 	Physics.add(this);
+	function updateArcsClipPath() {
+		//update EVERY dot. we're assuming that they all changed a little
+		//not the best assumption...
+		for (var i = 0; i < dotList.length; i++) {
+			var current = dotList[i];
+			current.arcsClipPath.innerHTML = '';
+			var others = Physics.adjacentTo(current);
+			for (var j = 0; j < others.length; j++) {
+				other = others[j];
+				//only work with current's clipPath.
+				//TODO
+			}
+			var circle = document.createElementNS(NS, 'circle');
+			
+			circle = document.createElementNS(NS, 'circle');
+			circle.setAttributeNS(null, 'cx', SVG_SIZE/2);
+			circle.setAttributeNS(null, 'cy', SVG_SIZE/2);
+			circle.setAttributeNS(null, 'r', SVG_SIZE/2);
+			current.arcsClipPath.appendChild(circle);
+		}
+	}
+	updateArcsClipPath();
 }
 
 
