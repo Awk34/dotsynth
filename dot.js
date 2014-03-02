@@ -2,7 +2,7 @@ var dotList = [];
 /**
  * Creates a new dot with all of its DOM elements
  */
-function dot(definition, x, y) {
+function Dot(definition, x, y) {
 	dotList.push(this);
 	var selfDot = this;
 	var parent = this.parentElement = document.body;
@@ -54,7 +54,6 @@ function dot(definition, x, y) {
 	this.centerElement.classList.add('dotcenter');
 	this.svgElement.classList.add('dotsvg');
 	this.centerElement.object = this;
-	
 	//end Center Dot
 	
 	this.arcsClipPath = document.createElementNS(NS, 'clipPath');
@@ -114,7 +113,7 @@ function dot(definition, x, y) {
 	var conn = null;
 	addListeners(this.centerElement, {
 		onHoldStart: function(e) {navigator.vibrate(HOLD_EFFECT_VIBRATE_TIME);},
-		onHoldDragStart: function(e) {conn = new connection(selfDot);},
+		onHoldDragStart: function(e) {conn = new Connection(selfDot);},
 		onHoldDragMove: function(e) {conn.endAt(e.mmX, e.mmY)},
 		onDragMove: function(e) {
 			Physics.remove(selfDot);
