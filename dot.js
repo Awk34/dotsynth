@@ -75,7 +75,7 @@ function Dot(definition, x, y) {
 			startAngle += 2*Math.PI;
 			endAngle += 2*Math.PI;
 		}
-		this.arcs.push(new arc(this.gArcsElement, startAngle, endAngle, paramList[i]));
+		this.arcs.push(new Arc(this.gArcsElement, startAngle, endAngle, paramList[i]));
 		
 	}
 	
@@ -131,7 +131,7 @@ function Dot(definition, x, y) {
 		onTapEnd: function(e) {selfDot.toggle();}
 	});
 	
-	function arc(parent, start, end, definition) {
+	function Arc(parent, start, end, definition) {
 		var selfArc = this;
 		this.definition = definition;
 		this.paramName = definition.name;
