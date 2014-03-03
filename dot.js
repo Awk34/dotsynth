@@ -131,7 +131,7 @@ function Dot(definition, x, y) {
 		onTapEnd: function(e) {selfDot.toggle();}
 	});
 	
-	function arc(parent, start, end, definition) {		
+	function arc(parent, start, end, definition) {
 		var selfArc = this;
 		this.definition = definition;
 		this.paramName = definition.name;
@@ -148,12 +148,12 @@ function Dot(definition, x, y) {
 		
 		//Making the path's 'd'
 		if( ( end - start ) > 6 /* AKA 2pi */) {	//has one parameter
-			var str = "M "+SVG_SIZE/2+" "+(SVG_SIZE/2 - ARC_RADIUS)+"\n";	
+			var str = "M "+SVG_SIZE/2+" "+(SVG_SIZE/2 - ARC_RADIUS)+"\n";
 			str += "A "+ARC_RADIUS+" "+ARC_RADIUS+" 0 0 0 "+(SVG_SIZE/2)+" "+(SVG_SIZE/2 + ARC_RADIUS)+"\n";
 			str += "A "+ARC_RADIUS+" "+ARC_RADIUS+" 0 0 0 "+(SVG_SIZE/2)+" "+(SVG_SIZE/2 - ARC_RADIUS)+"\n";
 		} else {	//has 1+ parameters
 			var endPoint = polarToCartesian(ARC_RADIUS, end, SVG_SIZE/2, SVG_SIZE/2);
-			var startPoint = polarToCartesian(ARC_RADIUS, start, SVG_SIZE/2, SVG_SIZE/2);			
+			var startPoint = polarToCartesian(ARC_RADIUS, start, SVG_SIZE/2, SVG_SIZE/2);
 			var str = "M "+endPoint.x+" "+endPoint.y+"\n";
 			str += "A "+ARC_RADIUS+" "+ARC_RADIUS+" 0 0 0 "+startPoint.x+" "+startPoint.y+"\n";
 		}

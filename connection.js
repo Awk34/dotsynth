@@ -54,20 +54,12 @@ function Connection(sourceDot) {
 		//if .object has a dot attached to it, and if it can take input...
 		if (target.object && Object.getPrototypeOf(target.object) == Dot.prototype && target.object != source && target.object.definition.canTakeInput) {
 			dest = target.object;
-			//console.log(target.object);
-			//console.log(dest.definition.canTakeInput);
-			/*if(!dest.definition.canTakeInput) {
-				//The destination node doesn't take input
-				//TODO: Display error to user
-				console.log("Illegal Connection: Destination has no inputs");
-				break;
-			}*/
 			source.connections.push(this);
 			dest.connections.push(this);
 			source.node.connect(dest.node);
 			this.redraw();
 		} else {
-			if(!target.object.definition.canTakeInput) {
+			if(target.object && !target.object.definition.canTakeInput) {
 				//The destination node doesn't take input
 				//TODO: Display error to user (popup?)
 				console.log("Illegal Connection: Destination has no inputs");
