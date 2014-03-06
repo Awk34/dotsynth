@@ -94,6 +94,31 @@ function dot(definition, x, y) {
 		if (isOpen) selfDot.close();
 		else selfDot.open();
 	}
+
+	//function for changing oscillator type
+	if(selfDot.definition.name == "Oscillator") {
+		this.changeType = function(type) {
+			switch(type) {
+				case "sine":
+					selfDot.node.type = "sine";
+					break;
+				case "square":
+					selfDot.node.type = "square";
+					break;
+				case "sawtooth":
+					selfDot.node.type = "sawtooth";
+					break;
+				case "triangle":
+					selfDot.node.type = "triangle";
+					break;
+				default:
+					console.log("Unknown Oscillator Type. The know types are sine, square, sawtooth, and triangle.");
+					break;
+			}
+		}
+		type = alert("hi");
+		console.log(type);
+	}
 	
 	//events
 	var conn = null;
@@ -187,8 +212,6 @@ function dot(definition, x, y) {
 			str += "A "+SVG_SIZE/2+" "+SVG_SIZE/2+" 0 0 0 "+startPoint.x+" "+startPoint.y+"\n";
 			selfArc.indicatorElement.setAttributeNS(null, 'd', str);
 		}
-		//set default arc position to 50%
-		// drawIndicator(.5);
 		//set default arc position to its node's default value's position
 		drawIndicator(selfArc.definition.invScale(selfDot.node[selfArc.definition.name].value));
 		
