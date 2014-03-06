@@ -94,3 +94,9 @@ text {
 .hidden {
 	display: none;
 }
+.waveformMenu {}
+.closed {
+	visibility: hidden;
+	pointer-events: none;
+}
+.waveformMenu.button {}

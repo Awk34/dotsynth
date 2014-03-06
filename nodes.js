@@ -15,9 +15,9 @@ var DOT_LIST = [
 		shortName: "Osc",
 		create: function() {
 			var tmp = context.createOscillator();
-			tmp.type = "square";
-			//console.log(typeof(tmp.type));
-			//tmp.invScale(100);
+			// tmp.type = "square";
+			// console.log(typeof(tmp.type));
+			// tmp.invScale(100);
 			tmp.start(0);
 			return tmp;
 		},
