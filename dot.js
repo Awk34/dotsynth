@@ -116,8 +116,8 @@ function dot(definition, x, y) {
 					break;
 			}
 		}
-		type = alert("hi");
-		console.log(type);
+		type = prompt("Enter the oscillator type here", "sine, square, sawtooth, triangle");
+		selfDot.changeType(type);
 	}
 	
 	//events
