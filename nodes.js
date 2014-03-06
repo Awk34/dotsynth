@@ -26,7 +26,7 @@ var DOT_LIST = [
 			{
 				name: "detune",
 				scale: function(percent) {
-					return (percent*1000)-100;
+					return (percent-.5)*9600;
 				},
 				invScale: function(value) {
 					/*
@@ -35,7 +35,7 @@ var DOT_LIST = [
 					 * minValue: -4800
 					 * maxValue: 4800
 					 */
-					return (value+100)/1000;
+					return (value/9600)+.5;
 				},
 				hue: 210
 			},
@@ -198,7 +198,6 @@ var DOT_LIST = [
 				scale: function(percent) {
 					return percent*40;
 				},
-				//TODO:
 				invScale: function(value) {
 					/*
 					 * 'value' ranges from 0 to 40
@@ -366,34 +365,4 @@ MicrophoneSample.prototype.visualize = function() {
     drawContext.fillRect(i * barWidth, offset, 1, 1);
   }
   requestAnimFrame(this.visualize.bind(this));
-};
-
-
-
-//Audio File Stuff
-function newAudioTag() {
-  // Create a new <audio> tag.
-  this.audio = new Audio();
-
-  // Note: the audio graph must be connected after the page is loaded.
-  // Otherwise, the Audio tag just plays normally and ignores the audio
-  // context. More info: crbug.com/112368
-  window.addEventListener('load', this.onload.bind(this), false);
-}
-
-newAudioTag.prototype.onload = function() {
-	// Create the audio nodes.
-	this.source = context.createMediaElementSource(this.audio);
-	this.filter = context.createBiquadFilter();
-	this.filter.type = this.filter.LOWPASS;
-	this.filter.frequency.value = 500;
-
-	// Connect the audio graph.
-	this.source.connect(this.filter);
-	this.filter.connect(context.destination);
-};
-
-newAudioTag.prototype.play = function(url) {
-  this.audio.src = url;
-  this.audio.play();
 };
