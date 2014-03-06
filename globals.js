@@ -20,3 +20,5 @@ var DOT_NAME_SIZE = 7;
 var DOT_LIGHTNESS = "30%";
 var CONNECTION_LIGHTNESS = "30%";
 var INDICATOR_LIGHTNESS = "50%"
+
+var nodeArray = [];

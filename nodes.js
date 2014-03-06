@@ -17,6 +17,7 @@ var DOT_LIST = [
 			var tmp = context.createOscillator();
 			tmp.type = "square";
 			//console.log(typeof(tmp.type));
+			//tmp.invScale(100);
 			tmp.start(0);
 			return tmp;
 		},
@@ -27,14 +28,37 @@ var DOT_LIST = [
 				scale: function(percent) {
 					return (percent*1000)-100;
 				},
+				invScale: function(value) {
+					/*
+					 * 'value' ranges from -100 to 900
+					 * defaultValue: 0
+					 * minValue: -4800
+					 * maxValue: 4800
+					 */
+					return (value+100)/1000;
+				},
 				hue: 210
 			},
 			{
 				name: "frequency",
 				scale: function(percent) {
-					var d = Math.floor(128*percent);
+					/* Warning: floor function was removed from here. I didn't hear an audible difference.
+					 * I'm not sure why it was here anyway
+					 * I changed it so the final frequency is a Math.floor
+					 */
+					var d = 128*percent;
 					var f = Math.pow(2,(d-69)/12)*440;
 					return f;
+				},
+				invScale: function(value) {
+					/*
+					 * 'value' should naturally range from 8 to 13,289 (based on what the current scale function does)
+					 * defaultValue: 440
+					 * minValue: 0
+					 * maxValue: 100000
+					 */
+					 // this isn't exactly correct...
+					return (69+12*(Math.log(value/440)/Math.log(2)))/100;
 				},
 				hue: 210
 			}
@@ -53,9 +77,20 @@ var DOT_LIST = [
 			{
 				name: "frequency",
 				scale: function(percent) {
-					var d = Math.floor(128*percent);
-					var f0 = Math.pow(2,(d-69)/12)*60;
-					return f0;
+					var d = 128*percent;
+					var f = Math.pow(2,(d-69)/12)*60;
+					return f;
+				},
+				invScale: function(value) {
+					/*
+					 * 'value' ranges from 1.11 to 1812
+					 * should change this to .01 to 20Hz
+					 * defaultValue: 440
+					 * minValue: 0
+					 * maxValue: 100000
+					 */
+					 // this isn't exactly correct...
+					return (69+12*(Math.log(value/60)/Math.log(2)))/100;
 				},
 				hue: 210
 			}
@@ -74,6 +109,15 @@ var DOT_LIST = [
 				scale: function(percent) {
 					return percent;
 				},
+				invScale: function(value) {
+					/*
+					 * 'value' ranges from 0 to 1
+					 * defaultValue: 1
+					 * minValue: 0
+					 * maxValue: 1
+					 */
+					return value;
+				},
 				hue: 0
 			}
 		]
@@ -91,6 +135,15 @@ var DOT_LIST = [
 				scale: function(percent) {
 					//min: 0.0, max: 1.0
 					return percent;
+				},
+				invScale: function(value) {
+					/*
+					 * 'value' ranges from 0 to 1
+					 * defaultValue: 0
+					 * minValue: 0
+					 * maxValue: 1
+					 */
+					return value;
 				},
 				hue: 60
 			}
@@ -127,6 +180,15 @@ var DOT_LIST = [
 				scale: function(percent) {
 					return (percent-1)*100;
 				},
+				invScale: function(value) {
+					/*
+					 * 'value' ranges from -100 to 0
+					 * defaultValue: -24
+					 * minValue: -100
+					 * maxValue: 0
+					 */
+					return (value/100)+1;
+				},
 				hue: 120
 			},
 			{
@@ -136,6 +198,16 @@ var DOT_LIST = [
 				scale: function(percent) {
 					return percent*40;
 				},
+				//TODO:
+				invScale: function(value) {
+					/*
+					 * 'value' ranges from 0 to 40
+					 * defaultValue: 30
+					 * minValue: 0
+					 * maxValue: 40
+					 */
+					return value/40;
+				},
 				hue: 120
 			},
 			{
@@ -143,7 +215,16 @@ var DOT_LIST = [
 				// The amount of dB change in input for a 1 dB change in output. Its default value is 12, with a nominal range of 1 to 20.
 				name: "ratio",
 				scale: function(percent) {
-					return percent*20;
+					return percent*19 + 1;
+				},
+				invScale: function(value) {
+					/*
+					 * 'value' ranges from 1 to 20
+					 * defaultValue: 12
+					 * minValue: 1
+					 * maxValue: 20
+					 */
+					return (value-1)/19;
 				},
 				hue: 120
 			},
@@ -154,6 +235,9 @@ var DOT_LIST = [
 				scale: function(percent) {
 					return (percent-1)*20;
 				},
+				invScale: function(value) {
+					return (value/20)+1;
+				},
 				hue: 120
 			},*/
 			{
@@ -163,6 +247,15 @@ var DOT_LIST = [
 				scale: function(percent) {
 					return percent;
 				},
+				invScale: function(value) {
+					/*
+					 * 'value' ranges from 0 to 1
+					 * defaultValue: 0.003000000026077032
+					 * minValue: 0
+					 * maxValue: 1
+					 */
+					return value;
+				},
 				hue: 120
 			},
 			{
@@ -171,6 +264,15 @@ var DOT_LIST = [
 				name: "release",
 				scale: function(percent) {
 					return percent;
+				},
+				invScale: function(value) {
+					/*
+					 * 'value' ranges from 0 to 1
+					 * defaultValue: .25
+					 * minValue: 0
+					 * maxValue: 1
+					 */
+					return value;
 				},
 				hue: 120
 			}
@@ -199,6 +301,9 @@ var DOT_LIST = [
 				name: "",
 				scale: function(percent) {
 					return percent;
+				},
+				invScale: function(value) {
+					return value;
 				},
 				hue: 120
 			}
