@@ -95,12 +95,10 @@ function Dot(definition, x, y) {
 	
 	this.isOpen = false;
 	this.open = function() {
-		console.log('open');
 		selfDot.isOpen = true;
 		this.svgElement.classList.add('opened');
 	}
 	this.close = function() {
-		console.log('close');
 		selfDot.isOpen = false;
 		this.svgElement.classList.remove('opened');
 	}
@@ -330,7 +328,6 @@ function Dot(definition, x, y) {
 				for (var j = 0; j < others.length; j++) {
 					other = others[j];
 					if (!other.isOpen) continue;
-					console.log(others);
 					//slice the clip path into 2 convex polygons,
 					//then check to see which is the one we want.
 					var dx = (other.x - current.x)/2;
@@ -391,9 +388,7 @@ function Dot(definition, x, y) {
 							}
 							result.push(i1);
 						}
-						console.log(points);
 						points = result;
-						console.log(points);
 					}
 				}
 			}
