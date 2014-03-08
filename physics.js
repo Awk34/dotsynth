@@ -1,5 +1,5 @@
 (function() {
-	var DOT_PHYSICS_RADIUS = 20;
+	var DOT_PHYSICS_RADIUS = DOT_RADIUS + ARC_WIDTH/2 + GAP_WIDTH;
 	var GRID_SIZE = DOT_PHYSICS_RADIUS*1.4;
 	
 	//triple array.
@@ -82,7 +82,7 @@
 					var dx = dot.x-other.x;
 					var dy = dot.y-other.y;
 					var distance = Math.sqrt(Math.pow(dx,2) + Math.pow(dy,2));
-					if (distance <= DOT_PHYSICS_RADIUS*2) {
+					if (distance <= drawRadius*2) {
 						returnList.push(other);
 					}
 				}

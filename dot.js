@@ -93,19 +93,19 @@ function Dot(definition, x, y) {
 	this.gCenterElement.appendChild(this.nameElement);
 	this.svgElement.appendChild(this.gCenterElement);
 	
-	var isOpen = false;
+	this.isOpen = false;
 	this.open = function() {
 		console.log('open');
-		isOpen = true;
+		selfDot.isOpen = true;
 		this.svgElement.classList.add('opened');
 	}
 	this.close = function() {
 		console.log('close');
-		isOpen = false;
+		selfDot.isOpen = false;
 		this.svgElement.classList.remove('opened');
 	}
 	this.toggle = function() {
-		if (isOpen) selfDot.close();
+		if (selfDot.isOpen) selfDot.close();
 		else selfDot.open();
 	}
 	
@@ -316,18 +316,95 @@ function Dot(definition, x, y) {
 			var current = dotList[i];
 			current.arcsClipPath.innerHTML = '';
 			var others = Physics.adjacentTo(current);
-			for (var j = 0; j < others.length; j++) {
-				other = others[j];
-				//only work with current's clipPath.
-				//TODO
-			}
-			var circle = document.createElementNS(NS, 'circle');
 			
-			circle = document.createElementNS(NS, 'circle');
-			circle.setAttributeNS(null, 'cx', SVG_SIZE/2);
-			circle.setAttributeNS(null, 'cy', SVG_SIZE/2);
-			circle.setAttributeNS(null, 'r', SVG_SIZE/2);
-			current.arcsClipPath.appendChild(circle);
+			//start with SVG's bounding box...
+			var points = [
+				{x:0,y:0},
+				{x:SVG_SIZE,y:0},
+				{x:SVG_SIZE,y:SVG_SIZE},
+				{x:0,y:SVG_SIZE}
+			];
+			
+			//...and cut away at it.
+			if (current.isOpen) {
+				for (var j = 0; j < others.length; j++) {
+					other = others[j];
+					if (!other.isOpen) continue;
+					console.log(others);
+					//slice the clip path into 2 convex polygons,
+					//then check to see which is the one we want.
+					var dx = (other.x - current.x)/2;
+					var dy = (other.y - current.y)/2;
+					//reduce the distance by GAP_WIDTH/2;
+					var len = Math.sqrt(dx*dx+dy*dy);
+					var newlen = len - GAP_WIDTH/2;
+					dx *= newlen/len;
+					dy *= newlen/len;
+					
+					var cut1 = {
+						x: SVG_SIZE/2 + dx,
+						y: SVG_SIZE/2 + dy
+					}
+					var cut2 = {
+						x: SVG_SIZE/2 + dx+dy,
+						y: SVG_SIZE/2 + dy-dx
+					}
+					var intersections = [];
+					for (var k = 0; k < points.length; k++) {
+						var p1 = points[k];
+						var p2 = points[(k+1)%points.length];
+						//intersection finder:
+						var x1 = cut1.x, y1 = cut1.y, x2 = cut2.x, y2 = cut2.y,
+							x3 = p1.x, y3 = p1.y, x4 = p2.x, y4 = p2.y;
+						var intersection = {
+							x: ( (x1*y2-y1*x2)*(x3-x4)-(x1-x2)*(x3*y4-y3*x4) )/( (x1-x2)*(y3-y4)-(y1-y2)*(x3-x4) ),
+							y: ( (x1*y2-y1*x2)*(y3-y4)-(y1-y2)*(x3*y4-y3*x4) )/( (x1-x2)*(y3-y4)-(y1-y2)*(x3-x4) )
+						}
+						if ((intersection.x < p1.x ^ intersection.x < p2.x) || (intersection.y < p1.y ^ intersection.y < p2.y)) {
+							//at this line segment following point k, there is an intersection.
+							intersections.push({intersection:intersection, k:k});
+						}
+					}
+					//if there were 2 intersections, perform the cut
+					if (intersections.length === 2) {
+						var result = [];
+						//the intersection points
+						var i1 = intersections[0].intersection;
+						var i2 = intersections[1].intersection;
+						//the indexes of the line segments that they intersected
+						var k1 = intersections[0].k;
+						var k2 = intersections[1].k;
+						
+						var isLeft = ((i2.x - i1.x)*(SVG_SIZE/2 - i1.y) - (i2.y - i1.y)*(SVG_SIZE/2 - i1.x)) < 0;
+						if (isLeft) {
+							//go from k1's line to k2's line
+							result.push(i1);
+							for (var k = k1+1; k <= k2; k++) {
+								result.push(points[k]);
+							}
+							result.push(i2);
+						} else {
+							//go from k2's line to k1's line
+							result.push(i2);
+							for (var k = (k2+1)%points.length; k != (k1+1)%points.length; k = (k+1)%points.length) {
+								result.push(points[k]);
+							}
+							result.push(i1);
+						}
+						console.log(points);
+						points = result;
+						console.log(points);
+					}
+				}
+			}
+			//now that points[] represents the clipPath we want, generate that clipPath
+			var str = 'M ' + points[0].x + ' ' + points[0].y;
+			for (var j = 1; j < points.length; j++) {
+				str += 'L ' + points[j].x + ' ' + points[j].y;
+			}
+			var path = document.createElementNS(NS, 'path');
+			path.setAttributeNS(null, 'd', str);
+			current.arcsClipPath.appendChild(path);
 		}
 	}
 	updateArcsClipPath();
