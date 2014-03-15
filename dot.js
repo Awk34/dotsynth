@@ -113,14 +113,19 @@ function Dot(definition, x, y) {
 		onHoldStart: function(e) {navigator.vibrate(HOLD_EFFECT_VIBRATE_TIME);},
 		onHoldDragStart: function(e) {conn = new Connection(selfDot);},
 		onHoldDragMove: function(e) {conn.endAt(e.mmX, e.mmY)},
-		onDragMove: function(e) {
+		onDragStart: function(e) {
 			Physics.remove(selfDot);
+			updateArcsClipPath();
+		},
+		onDragMove: function(e) {
 			selfDot.x = e.mmX;
 			selfDot.y = e.mmY;
-			Physics.add(selfDot);
 			//re-render the clipping paths for intersecting arcs
 			//TODO: move this to an area that is more generally
 			//      about the event "dots moved".
+		},
+		onDragEnd: function(e) {
+			Physics.add(selfDot);
 			updateArcsClipPath();
 		},
 		onHoldDragEnd: function(e) {
@@ -313,6 +318,7 @@ function Dot(definition, x, y) {
 		for (var i = 0; i < dotList.length; i++) {
 			var current = dotList[i];
 			current.arcsClipPath.innerHTML = '';
+			if (!Physics.hasDot(current)) continue;
 			var others = Physics.adjacentTo(current);
 			
 			//start with SVG's bounding box...

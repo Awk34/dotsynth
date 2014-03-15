@@ -43,6 +43,7 @@
 		return returnList;
 	}
 	function addDot(dot) {
+		dot.inPhysics = true;
 		var adj = adjacentCandidates(dot.x, dot.y);
 		for (var i = 0; i < adj.length; i++) {
 			var dx = adj[i].x-dot.x;
@@ -65,6 +66,7 @@
 		return dot;
 	}
 	function removeDot(dot) {
+		dot.inPhysics = false;
 		if (getDotAtCoords(dot.x, dot.y) === dot)
 			setDotAtCoords(undefined, dot.x, dot.y);
 	}
@@ -93,6 +95,9 @@
 	Physics = {
 		add: addDot,
 		remove: removeDot,
-		adjacentTo: adjacentDots
+		adjacentTo: adjacentDots,
+		hasDot: function(dot) {
+			return dot.inPhysics == true;
+		}
 	}
 })();
