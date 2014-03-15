@@ -97,10 +97,12 @@ function Dot(definition, x, y) {
 	this.open = function() {
 		selfDot.isOpen = true;
 		this.svgElement.classList.add('opened');
+		updateArcsClipPath();
 	}
 	this.close = function() {
 		selfDot.isOpen = false;
 		this.svgElement.classList.remove('opened');
+		updateArcsClipPath();
 	}
 	this.toggle = function() {
 		if (selfDot.isOpen) selfDot.close();

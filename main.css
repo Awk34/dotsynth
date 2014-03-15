@@ -37,9 +37,6 @@ svg {
 svg > * {
 	pointer-events: all;
 }
-svg.dotsvg * {
-	transition: opacity .2s;
-}
 svg.dotsvg:not(.opened) .arc {
 	opacity: 0;
 	pointer-events: none;
