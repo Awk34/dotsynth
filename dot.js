@@ -334,7 +334,7 @@ function Dot(definition, x, y) {
 			//...and cut away at it.
 			if (current.isOpen) {
 				for (var j = 0; j < others.length; j++) {
-					other = others[j];
+					var other = others[j];
 					if (!other.isOpen) continue;
 					//slice the clip path into 2 convex polygons,
 					//then check to see which is the one we want.
