@@ -116,19 +116,29 @@ function Dot(definition, x, y) {
 		onHoldDragStart: function(e) {conn = new Connection(selfDot);},
 		onHoldDragMove: function(e) {conn.endAt(e.mmX, e.mmY)},
 		onDragStart: function(e) {
-			Physics.remove(selfDot);
-			updateArcsClipPath();
+			if (!CONTINUOUS_PHYSICS) {
+				Physics.remove(selfDot);
+				updateArcsClipPath();
+			}
 		},
 		onDragMove: function(e) {
+			if (CONTINUOUS_PHYSICS)
+				Physics.remove(selfDot);
 			selfDot.x = e.mmX;
 			selfDot.y = e.mmY;
+			if (CONTINUOUS_PHYSICS) {
+				Physics.add(selfDot);
+				updateArcsClipPath();
+			}
 			//re-render the clipping paths for intersecting arcs
 			//TODO: move this to an area that is more generally
 			//      about the event "dots moved".
 		},
 		onDragEnd: function(e) {
-			Physics.add(selfDot);
-			updateArcsClipPath();
+			if (!CONTINUOUS_PHYSICS) {
+				Physics.add(selfDot);
+				updateArcsClipPath();
+			}
 		},
 		onHoldDragEnd: function(e) {
 			conn.finalize(document.elementFromPoint(e.clientX, e.clientY))
