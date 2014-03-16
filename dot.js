@@ -342,7 +342,6 @@ function Dot(definition, x, y) {
 		for (var i = 0; i < dotList.length; i++) {
 			var current = dotList[i];
 			current.arcsClipPath.innerHTML = '';
-			if (!Physics.hasDot(current)) continue;
 			var others = Physics.adjacentTo(current);
 			
 			//start with SVG's bounding box...
@@ -354,7 +353,7 @@ function Dot(definition, x, y) {
 			];
 			
 			//...and cut away at it.
-			if (current.isOpen) {
+			if (current.isOpen && Physics.hasDot(current)) {
 				for (var j = 0; j < others.length; j++) {
 					var other = others[j];
 					if (!other.isOpen) continue;
