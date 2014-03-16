@@ -95,6 +95,7 @@ function Dot(definition, x, y) {
 	
 	this.isOpen = false;
 	this.open = function() {
+		if (selfDot.arcs.length == 0) return;
 		selfDot.isOpen = true;
 		this.svgElement.classList.add('opened');
 		updateArcsClipPath();
