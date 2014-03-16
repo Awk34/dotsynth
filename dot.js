@@ -118,6 +118,8 @@ function Dot(definition, x, y) {
 		onHoldDragStart: function(e) {conn = new Connection(selfDot);},
 		onHoldDragMove: function(e) {conn.endAt(e.mmX, e.mmY)},
 		onDragStart: function(e) {
+			//move to front
+			selfDot.svgElement.parentNode.appendChild(selfDot.svgElement);
 			if (!CONTINUOUS_PHYSICS) {
 				Physics.remove(selfDot);
 				updateArcsClipPath();
