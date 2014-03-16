@@ -365,7 +365,9 @@ function Dot(definition, x, y) {
 							x: ( (x1*y2-y1*x2)*(x3-x4)-(x1-x2)*(x3*y4-y3*x4) )/( (x1-x2)*(y3-y4)-(y1-y2)*(x3-x4) ),
 							y: ( (x1*y2-y1*x2)*(y3-y4)-(y1-y2)*(x3*y4-y3*x4) )/( (x1-x2)*(y3-y4)-(y1-y2)*(x3-x4) )
 						}
-						if ((intersection.x < p1.x ^ intersection.x < p2.x) || (intersection.y < p1.y ^ intersection.y < p2.y)) {
+						var isYDiffGreater = Math.abs(p2.y-p1.y) > Math.abs(p2.x-p1.x);
+						if (	(!isYDiffGreater && (intersection.x < p1.x ^ intersection.x < p2.x) )
+							||	( isYDiffGreater && (intersection.y < p1.y ^ intersection.y < p2.y) ) ) {
 							//at this line segment following point k, there is an intersection.
 							intersections.push({intersection:intersection, k:k});
 						}
