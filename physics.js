@@ -1,7 +1,4 @@
 (function() {
-	var DOT_PHYSICS_RADIUS = DOT_RADIUS + ARC_WIDTH/2 + GAP_WIDTH;
-	var GRID_SIZE = DOT_PHYSICS_RADIUS*1.4;
-	
 	//triple array.
 	//for every X, an array of Y's
 		//every Y, a dot, or nothing
