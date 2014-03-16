@@ -13,6 +13,7 @@ function Dot(definition, x, y) {
 	this.svgElement.setAttributeNS(null, 'width', SVG_SIZE + UNITS);
 	this.svgElement.setAttributeNS(null, 'height', SVG_SIZE + UNITS);
 	this.svgElement.setAttributeNS(null, 'viewBox','0 0 ' + SVG_SIZE + ' ' + SVG_SIZE);
+	this.svgElement.setAttributeNS(null, 'id', Math.floor(Math.random()*1000000000));
 	this.svgElement.style.position = "absolute";
 	parent.appendChild(this.svgElement);
 	
@@ -225,7 +226,10 @@ function Dot(definition, x, y) {
 			str += "A "+SVG_SIZE/2+" "+SVG_SIZE/2+" 0 0 0 "+startPoint.x+" "+startPoint.y+"\n";
 			selfArc.indicatorElement.setAttributeNS(null, 'd', str);
 		}
-		drawIndicator(.5);
+		//set default arc position to 50%
+		// drawIndicator(.5);
+		//set default arc position to its node's default value's position
+		drawIndicator(selfArc.definition.invScale(selfDot.node[selfArc.definition.name].value));
 		
 		//create our double-clip path
 		
@@ -315,6 +319,13 @@ function Dot(definition, x, y) {
 			var percent = (angle-start)/(end-start);
 			selfDot.node[selfArc.definition.name].value = selfArc.definition.scale(percent);
 			drawIndicator(percent);
+		}
+
+		this.invModifyValue = function(value) {
+			selfDot.node[selfArc.definition.name].value = value;
+			// console.log("Percent: "+selfArc.definition.invScale(value));
+			// console.log("Definition: "+selfArc.definition.name);
+			drawIndicator(selfArc.definition.invScale(value));
 		}
 		
 		//arc events
