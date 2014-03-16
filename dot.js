@@ -190,7 +190,7 @@ function dot(definition, x, y) {
 			this.buttonTextElement.setAttributeNS(null, 'text-anchor', 'middle');
 			this.buttonTextElement.setAttributeNS(null, 'dominant-baseline', 'middle');
 			this.buttonTextElement.setAttributeNS(null, 'font-size', DOT_NAME_SIZE);
-			this.buttonTextElement.setAttributeNS(null, 'fill', 'black');
+			this.buttonTextElement.setAttributeNS(null, 'fill', 'White');
 			selfDot.svgElement.appendChild(this.buttonTextElement);
 			this.text.push(this.buttonTextElement);
 		}
