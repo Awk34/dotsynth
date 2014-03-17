@@ -13,12 +13,18 @@
 	styleSheet.appendChild(document.createTextNode('')); //compatibility hack
 	styleSheet = styleSheet.sheet;
 
+	var alreadyAddedDot = {};
+	var alreadyAddedParam = {};
 	for (var i in DOT_LIST) {
 		//TODO: move .dotcenter and .arc (and other classes) to globals,
 		//      to be used as identifier constants, rather than
 		//      magic strings.
 		//dot center styles
 		var dotDef = DOT_LIST[i];
+		if (alreadyAddedDot[dotDef.className])
+			continue;
+		else
+			alreadyAddedDot[dotDef.className] = true;
 		styleSheet.insertRule("\
 			.dotcenter." + dotDef.className + " {\
 				fill: hsla(" + dotDef.hue + "," + DOT_SATURATION + "," + DOT_LIGHTNESS + "," + DOT_ALPHA + ");\
@@ -28,6 +34,10 @@
 		//arc/param styles
 		for (var j in dotDef.parameters) {
 			var paramDef = dotDef.parameters[j];
+			if (alreadyAddedParam[paramDef.className])
+				continue;
+			else
+				alreadyAddedParam[paramDef.className] = true;
 			styleSheet.insertRule("\
 				.arc." + paramDef.className + "{\
 					stroke: hsla(" + paramDef.hue + ","  + INDICATOR_ARC_SATURATION + ","  + INDICATOR_ARC_LIGHTNESS + "," + INDICATOR_ARC_ALPHA + ");\
