@@ -81,3 +81,8 @@ text {
 .hidden {
 	display: none;
 }
+.dot.name {
+	text-anchor: middle;
+	dominant-baseline: middle;
+	fill: black;
+}

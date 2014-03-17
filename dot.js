@@ -83,12 +83,11 @@ function Dot(definition, x, y) {
 	this.gCenterElement.appendChild(this.centerElement);
 	
 	this.nameElement = document.createElementNS(NS, 'text');
+	this.nameElement.classList.add('name');
+	this.nameElement.classList.add('dot');
 	this.nameElement.setAttributeNS(null, 'x', SVG_SIZE/2);
 	this.nameElement.setAttributeNS(null, 'y', SVG_SIZE/2);
-	this.nameElement.setAttributeNS(null, 'text-anchor', 'middle');
-	this.nameElement.setAttributeNS(null, 'dominant-baseline', 'middle');
 	this.nameElement.setAttributeNS(null, 'font-size', DOT_NAME_SIZE);
-	this.nameElement.setAttributeNS(null, 'fill', 'black');
 	this.nameElement.innerHTML = definition.shortName;
 	
 	this.gCenterElement.appendChild(this.nameElement);
