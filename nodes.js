@@ -2,17 +2,20 @@ var DOT_LIST = [
 	{
 		name: "Output",
 		shortName: "Out",
+		canTakeInput: true,
 		create: function() {
 			var tmp = context.destination;
 			tmp.connections = [];
 			return tmp;
 		},
+		//huehuehue
 		hue: 300,
 		parameters: []
 	},
 	{
 		name: "Oscillator",
 		shortName: "Osc",
+		canTakeInput: false,
 		create: function() {
 			var tmp = context.createOscillator();
 			tmp.type = "square";
@@ -67,6 +70,7 @@ var DOT_LIST = [
 	{
 		name: "Low Frequency Oscillator",
 		shortName: "LFO",
+		canTakeInput: false,
 		create: function() {
 			var tmp = context.createOscillator();
 			tmp.start(0);
@@ -99,6 +103,7 @@ var DOT_LIST = [
 	{
 		name: "Gain",
 		shortName: "Gain",
+		canTakeInput: true,
 		create: function() {
 			return context.createGain();
 		},
@@ -125,6 +130,7 @@ var DOT_LIST = [
 	{
 		name: "Delay",
 		shortName: "Delay",
+		canTakeInput: true,
 		create: function() {
 			return context.createDelay();
 		},
@@ -152,6 +158,7 @@ var DOT_LIST = [
 	/*{
 		name: "AudioSourceNode",
 		shortName: "Src",
+		canTakeInput: false,
 		create: function() {
 			this.audioPlayer = new newAudioTag();
 			this.audioPlayer.source = context.createMediaElementSource(this.audioPlayer.audio);
@@ -168,6 +175,7 @@ var DOT_LIST = [
 	{
 		name: "Compressor",
 		shortName: "Comp",
+		canTakeInput: true,
 		create: function() {
 			return context.createDynamicsCompressor();
 		},
@@ -280,6 +288,7 @@ var DOT_LIST = [
 	/*{
 		name: "Panner",
 		shortName: "Pan",
+		canTakeInput: true,
 		create: function() {
 			return context.createPanner();
 		},
@@ -291,6 +300,7 @@ var DOT_LIST = [
 	/*{
 		name: "Convolver",
 		shortName: "Conv",
+		canTakeInput: true,
 		create: function() {
 			return context.createConvolver();
 		},

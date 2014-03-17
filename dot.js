@@ -1,7 +1,9 @@
+var dotList = [];
 /**
  * Creates a new dot with all of its DOM elements
  */
-function dot(definition, x, y) {
+function Dot(definition, x, y) {
+	dotList.push(this);
 	var selfDot = this;
 	var parent = this.parentElement = document.body;
 	this.definition = definition;
@@ -43,6 +45,8 @@ function dot(definition, x, y) {
 	this.y = y;
 	
 	//Center Dot
+	this.gCenterElement = document.createElementNS(NS, 'g');
+	this.gCenterElement.classList.add('centerWrapper');
 	this.centerElement = document.createElementNS(NS, 'circle');
 	this.centerElement.setAttributeNS(null, 'cx', SVG_SIZE/2);
 	this.centerElement.setAttributeNS(null, 'cy', SVG_SIZE/2);
@@ -51,9 +55,17 @@ function dot(definition, x, y) {
 	this.centerElement.classList.add('dotcenter');
 	this.svgElement.classList.add('dotsvg');
 	this.centerElement.object = this;
-	
 	//end Center Dot
-
+	
+	this.arcsClipPath = document.createElementNS(NS, 'clipPath');
+	this.arcsClipPath.id = 'arcsClipPath' + CLIP_PATH_ID++;
+	this.svgElement.appendChild(this.arcsClipPath);
+	
+	this.gArcsElement = document.createElementNS(NS, 'g');
+	this.gArcsElement.classList.add('arcsWrapper');
+	this.gArcsElement.setAttributeNS(null, 'clip-path', "url(#" + this.arcsClipPath.id + ")");
+	this.svgElement.appendChild(this.gArcsElement);
+	
 	this.arcs = [];
 	
 	var paramList = definition.parameters
@@ -64,10 +76,11 @@ function dot(definition, x, y) {
 			startAngle += 2*Math.PI;
 			endAngle += 2*Math.PI;
 		}
-		this.arcs.push(new arc(this.svgElement, startAngle, endAngle, paramList[i]));
+		this.arcs.push(new Arc(this.gArcsElement, startAngle, endAngle, paramList[i]));
+		
 	}
 	
-	this.svgElement.appendChild(this.centerElement);
+	this.gCenterElement.appendChild(this.centerElement);
 	
 	this.nameElement = document.createElementNS(NS, 'text');
 	this.nameElement.setAttributeNS(null, 'x', SVG_SIZE/2);
@@ -77,21 +90,24 @@ function dot(definition, x, y) {
 	this.nameElement.setAttributeNS(null, 'font-size', DOT_NAME_SIZE);
 	this.nameElement.setAttributeNS(null, 'fill', 'black');
 	this.nameElement.innerHTML = definition.shortName;
-	this.svgElement.appendChild(this.nameElement);
 	
-	var isOpen = false;
+	this.gCenterElement.appendChild(this.nameElement);
+	this.svgElement.appendChild(this.gCenterElement);
+	
+	this.isOpen = false;
 	this.open = function() {
-		console.log('open');
-		isOpen = true;
+		if (selfDot.arcs.length == 0) return;
+		selfDot.isOpen = true;
 		this.svgElement.classList.add('opened');
+		updateArcsClipPath();
 	}
 	this.close = function() {
-		console.log('close');
-		isOpen = false;
+		selfDot.isOpen = false;
 		this.svgElement.classList.remove('opened');
+		updateArcsClipPath();
 	}
 	this.toggle = function() {
-		if (isOpen) selfDot.close();
+		if (selfDot.isOpen) selfDot.close();
 		else selfDot.open();
 	}
 	
@@ -99,11 +115,34 @@ function dot(definition, x, y) {
 	var conn = null;
 	addListeners(this.centerElement, {
 		onHoldStart: function(e) {navigator.vibrate(HOLD_EFFECT_VIBRATE_TIME);},
-		onHoldDragStart: function(e) {conn = new connection(selfDot);},
+		onHoldDragStart: function(e) {conn = new Connection(selfDot);},
 		onHoldDragMove: function(e) {conn.endAt(e.mmX, e.mmY)},
+		onDragStart: function(e) {
+			//move to front
+			selfDot.svgElement.parentNode.appendChild(selfDot.svgElement);
+			if (!CONTINUOUS_PHYSICS) {
+				Physics.remove(selfDot);
+				updateArcsClipPath();
+			}
+		},
 		onDragMove: function(e) {
+			if (CONTINUOUS_PHYSICS)
+				Physics.remove(selfDot);
 			selfDot.x = e.mmX;
 			selfDot.y = e.mmY;
+			if (CONTINUOUS_PHYSICS) {
+				Physics.add(selfDot);
+				updateArcsClipPath();
+			}
+			//re-render the clipping paths for intersecting arcs
+			//TODO: move this to an area that is more generally
+			//      about the event "dots moved".
+		},
+		onDragEnd: function(e) {
+			if (!CONTINUOUS_PHYSICS) {
+				Physics.add(selfDot);
+				updateArcsClipPath();
+			}
 		},
 		onHoldDragEnd: function(e) {
 			conn.finalize(document.elementFromPoint(e.clientX, e.clientY))
@@ -111,12 +150,14 @@ function dot(definition, x, y) {
 		onTapEnd: function(e) {selfDot.toggle();}
 	});
 	
-	function arc(parent, start, end, definition) {
+	function Arc(parent, start, end, definition) {
 		var selfArc = this;
 		this.definition = definition;
 		this.paramName = definition.name;
 		
 		var clipPathId = CLIP_PATH_ID++;
+		this.gElement = document.createElementNS(NS, 'g');
+		this.gElement.classList.add('arcWrapper');
 		this.pathElement = document.createElementNS(NS, 'path');
 		this.pathElement.classList.add('arc');
 		this.pathElement.setAttributeNS(null, 'stroke', 'hsla( 0, 0%, ' + EMPTY_ARC_LIGHTNESS + ', ' + EMPTY_ARC_ALPHA + ')');
@@ -126,12 +167,12 @@ function dot(definition, x, y) {
 		
 		//Making the path's 'd'
 		if( ( end - start ) > 6 /* AKA 2pi */) {	//has one parameter
-			var str = "M "+SVG_SIZE/2+" "+(SVG_SIZE/2 - ARC_RADIUS)+"\n";	
+			var str = "M "+SVG_SIZE/2+" "+(SVG_SIZE/2 - ARC_RADIUS)+"\n";
 			str += "A "+ARC_RADIUS+" "+ARC_RADIUS+" 0 0 0 "+(SVG_SIZE/2)+" "+(SVG_SIZE/2 + ARC_RADIUS)+"\n";
 			str += "A "+ARC_RADIUS+" "+ARC_RADIUS+" 0 0 0 "+(SVG_SIZE/2)+" "+(SVG_SIZE/2 - ARC_RADIUS)+"\n";
 		} else {	//has 1+ parameters
 			var endPoint = polarToCartesian(ARC_RADIUS, end, SVG_SIZE/2, SVG_SIZE/2);
-			var startPoint = polarToCartesian(ARC_RADIUS, start, SVG_SIZE/2, SVG_SIZE/2);			
+			var startPoint = polarToCartesian(ARC_RADIUS, start, SVG_SIZE/2, SVG_SIZE/2);
 			var str = "M "+endPoint.x+" "+endPoint.y+"\n";
 			str += "A "+ARC_RADIUS+" "+ARC_RADIUS+" 0 0 0 "+startPoint.x+" "+startPoint.y+"\n";
 		}
@@ -210,10 +251,12 @@ function dot(definition, x, y) {
 		this.indicatorElement.setAttributeNS(null, 'clip-path', 'url(#doubleClip' + clipPathId + ')');
 		
 		
-		parent.appendChild(this.doubleClipPathElement);
-		parent.appendChild(this.pathElement);
-		parent.appendChild(this.indicatorElement);
-		parent.appendChild(this.clipPathElement);
+		this.gElement.appendChild(this.doubleClipPathElement);
+		this.gElement.appendChild(this.pathElement);
+		this.gElement.appendChild(this.indicatorElement);
+		this.gElement.appendChild(this.clipPathElement);
+		
+		parent.appendChild(this.gElement);
 		
 		function polarToCartesian(radius, angle, originX, originY) {
 			return {
@@ -294,6 +337,105 @@ function dot(definition, x, y) {
 			onTapEnd:   function(e) {modifyValue(e.pxX, e.pxY);}
 		});
 	}
+	Physics.add(this);
+	function updateArcsClipPath() {
+		//update EVERY dot. we're assuming that they all changed a little
+		//not the best assumption...
+		for (var i = 0; i < dotList.length; i++) {
+			var current = dotList[i];
+			current.arcsClipPath.innerHTML = '';
+			var others = Physics.adjacentTo(current);
+			
+			//start with SVG's bounding box...
+			var points = [
+				{x:0,y:0},
+				{x:SVG_SIZE,y:0},
+				{x:SVG_SIZE,y:SVG_SIZE},
+				{x:0,y:SVG_SIZE}
+			];
+			
+			//...and cut away at it.
+			if (current.isOpen && Physics.hasDot(current)) {
+				for (var j = 0; j < others.length; j++) {
+					var other = others[j];
+					if (!other.isOpen) continue;
+					//slice the clip path into 2 convex polygons,
+					//then check to see which is the one we want.
+					var dx = (other.x - current.x)/2;
+					var dy = (other.y - current.y)/2;
+					//reduce the distance by GAP_WIDTH/2;
+					var len = Math.sqrt(dx*dx+dy*dy);
+					var newlen = len - GAP_WIDTH/2;
+					dx *= newlen/len;
+					dy *= newlen/len;
+					
+					var cut1 = {
+						x: SVG_SIZE/2 + dx,
+						y: SVG_SIZE/2 + dy
+					}
+					var cut2 = {
+						x: SVG_SIZE/2 + dx+dy,
+						y: SVG_SIZE/2 + dy-dx
+					}
+					var intersections = [];
+					for (var k = 0; k < points.length; k++) {
+						var p1 = points[k];
+						var p2 = points[(k+1)%points.length];
+						//intersection finder:
+						var x1 = cut1.x, y1 = cut1.y, x2 = cut2.x, y2 = cut2.y,
+							x3 = p1.x, y3 = p1.y, x4 = p2.x, y4 = p2.y;
+						var intersection = {
+							x: ( (x1*y2-y1*x2)*(x3-x4)-(x1-x2)*(x3*y4-y3*x4) )/( (x1-x2)*(y3-y4)-(y1-y2)*(x3-x4) ),
+							y: ( (x1*y2-y1*x2)*(y3-y4)-(y1-y2)*(x3*y4-y3*x4) )/( (x1-x2)*(y3-y4)-(y1-y2)*(x3-x4) )
+						}
+						var isYDiffGreater = Math.abs(p2.y-p1.y) > Math.abs(p2.x-p1.x);
+						if (	(!isYDiffGreater && (intersection.x < p1.x ^ intersection.x < p2.x) )
+							||	( isYDiffGreater && (intersection.y < p1.y ^ intersection.y < p2.y) ) ) {
+							//at this line segment following point k, there is an intersection.
+							intersections.push({intersection:intersection, k:k});
+						}
+					}
+					//if there were 2 intersections, perform the cut
+					if (intersections.length === 2) {
+						var result = [];
+						//the intersection points
+						var i1 = intersections[0].intersection;
+						var i2 = intersections[1].intersection;
+						//the indexes of the line segments that they intersected
+						var k1 = intersections[0].k;
+						var k2 = intersections[1].k;
+						
+						var isLeft = ((i2.x - i1.x)*(SVG_SIZE/2 - i1.y) - (i2.y - i1.y)*(SVG_SIZE/2 - i1.x)) < 0;
+						if (isLeft) {
+							//go from k1's line to k2's line
+							result.push(i1);
+							for (var k = k1+1; k <= k2; k++) {
+								result.push(points[k]);
+							}
+							result.push(i2);
+						} else {
+							//go from k2's line to k1's line
+							result.push(i2);
+							for (var k = (k2+1)%points.length; k != (k1+1)%points.length; k = (k+1)%points.length) {
+								result.push(points[k]);
+							}
+							result.push(i1);
+						}
+						points = result;
+					}
+				}
+			}
+			//now that points[] represents the clipPath we want, generate that clipPath
+			var str = 'M ' + points[0].x + ' ' + points[0].y;
+			for (var j = 1; j < points.length; j++) {
+				str += 'L ' + points[j].x + ' ' + points[j].y;
+			}
+			var path = document.createElementNS(NS, 'path');
+			path.setAttributeNS(null, 'd', str);
+			current.arcsClipPath.appendChild(path);
+		}
+	}
+	updateArcsClipPath();
 }
 
 
