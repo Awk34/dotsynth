@@ -51,8 +51,8 @@ function Dot(definition, x, y) {
 	this.centerElement.setAttributeNS(null, 'cx', SVG_SIZE/2);
 	this.centerElement.setAttributeNS(null, 'cy', SVG_SIZE/2);
 	this.centerElement.setAttributeNS(null, 'r', DOT_RADIUS);
-	this.centerElement.setAttributeNS(null, 'fill', 'hsla( ' + definition.hue + ', 100%, ' + DOT_LIGHTNESS + ', 1)');
 	this.centerElement.classList.add('dotcenter');
+	this.centerElement.classList.add(definition.className);
 	this.svgElement.classList.add('dotsvg');
 	this.centerElement.object = this;
 	//end Center Dot
@@ -160,9 +160,7 @@ function Dot(definition, x, y) {
 		this.gElement.classList.add('arcWrapper');
 		this.pathElement = document.createElementNS(NS, 'path');
 		this.pathElement.classList.add('arc');
-		this.pathElement.setAttributeNS(null, 'stroke', 'hsla( 0, 0%, ' + EMPTY_ARC_LIGHTNESS + ', ' + EMPTY_ARC_ALPHA + ')');
-		this.pathElement.setAttributeNS(null, 'fill', "none");
-		this.pathElement.setAttributeNS(null, 'stroke-width', ARC_WIDTH);
+		this.pathElement.classList.add('empty');
 		this.pathElement.setAttributeNS(null, 'clip-path', "url(#clip" + clipPathId + ")");
 		
 		//Making the path's 'd'
@@ -210,8 +208,7 @@ function Dot(definition, x, y) {
 		
 		this.indicatorElement = document.createElementNS(NS, 'path');
 		this.indicatorElement.classList.add('arc');
-		this.indicatorElement.setAttributeNS(null, 'fill', 'hsla(' + selfArc.definition.hue + ', 100%, ' + FILL_ARC_LIGHTNESS + ', 1)');
-		this.indicatorElement.setAttributeNS(null, 'stroke', 'hsla(' + selfArc.definition.hue + ', 100%, ' + STROKE_ARC_LIGHTNESS + ', 1)');
+		this.indicatorElement.classList.add(definition.className);
 		this.indicatorElement.style['pointer-events'] = 'none';
 		function drawIndicator(percent) {
 			var str = "M " + selfArc.clipOrigin.x + " " + selfArc.clipOrigin.y;
