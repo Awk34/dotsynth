@@ -52,19 +52,20 @@ function Connection(sourceDot) {
 	}
 	this.finalize = function(target) {
 		//if .object has a dot attached to it, and if it can take input...
-		if (target.object && Object.getPrototypeOf(target.object) == Dot.prototype && target.object != source && target.object.definition.canTakeInput) {
-			dest = target.object;
+		dest = target.object;
+		if (dest && dest != source && dest.canTakeInput) {
 			source.connections.push(this);
+			if (dest.node) {
+				source.node.connect(dest.node);
+			} else {
+				source.node.connect(dest.dot.node[dest.paramName]);
+				dest = dest.dot;
+			}
 			dest.connections.push(this);
-			source.node.connect(dest.node);
 			this.redraw();
 		} else {
-			if(target.object && !target.object.definition.canTakeInput) {
-				//The destination node doesn't take input
-				//TODO: Display error to user (popup?)
-				console.log("Illegal Connection: Destination has no inputs");
-			}
 			parent.removeChild(this.svgElement);
+			//TODO: garbage collect?
 		}
 	}
 }

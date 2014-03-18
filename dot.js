@@ -7,6 +7,7 @@ function Dot(definition, x, y) {
 	var selfDot = this;
 	var parent = this.parentElement = document.body;
 	this.definition = definition;
+	this.canTakeInput = definition.canTakeInput;
 	this.connections = [];
 	this.node = definition.create();
 	this.svgElement = document.createElementNS(NS, "svg");
@@ -154,6 +155,8 @@ function Dot(definition, x, y) {
 		var selfArc = this;
 		this.definition = definition;
 		this.paramName = definition.name;
+		this.dot = selfDot;
+		this.canTakeInput = true;
 		
 		var clipPathId = CLIP_PATH_ID++;
 		this.gElement = document.createElementNS(NS, 'g');
@@ -164,6 +167,7 @@ function Dot(definition, x, y) {
 		this.pathElement.setAttributeNS(null, 'fill', "none");
 		this.pathElement.setAttributeNS(null, 'stroke-width', ARC_WIDTH);
 		this.pathElement.setAttributeNS(null, 'clip-path', "url(#clip" + clipPathId + ")");
+		this.pathElement.object = this;
 		
 		//Making the path's 'd'
 		if( ( end - start ) > 6 /* AKA 2pi */) {	//has one parameter
