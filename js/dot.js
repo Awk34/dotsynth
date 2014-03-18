@@ -5,6 +5,7 @@ function Dot(definition, x, y) {
 	var selfDot = this;
 	var parent = this.parentElement = document.body;
 	this.definition = definition;
+    this.definition.parent = selfDot;
 	this.connections = [];
 	this.node = definition.create();
 	this.svgElement = document.createElementNS(NS, "svg");
@@ -13,6 +14,7 @@ function Dot(definition, x, y) {
 	this.svgElement.setAttributeNS(null, 'viewBox','0 0 ' + SVG_SIZE + ' ' + SVG_SIZE);
 	this.svgElement.setAttributeNS(null, 'id', Math.floor(Math.random()*1000000000));
 	this.svgElement.style.position = "absolute";
+    this.optionsMenu = new OptionsMenu(this.definition);
 	parent.appendChild(this.svgElement);
 	
 	Object.defineProperty(this, 'x', {
@@ -95,33 +97,7 @@ function Dot(definition, x, y) {
 		else selfDot.open();
 	};
 
-	//function for changing oscillator type
-	if(selfDot.definition.name == "Oscillator") {
-		this.changeType = function(type) {
-			switch(type) {
-				case "sine":
-					selfDot.node.type = "sine";
-					break;
-				case "square":
-					selfDot.node.type = "square";
-					break;
-				case "sawtooth":
-					selfDot.node.type = "sawtooth";
-					break;
-				case "triangle":
-					selfDot.node.type = "triangle";
-					break;
-				default:
-					console.log("Unknown Oscillator Type. The know types are sine, square, sawtooth, and triangle. Node has been set to a default of 'sine'.");
-					break;
-			}
-		};
-		//type = prompt("Enter the oscillator type here", "sine, square, sawtooth, or triangle");
-		//selfDot.changeType(type);
-		selfDot.waveformMenu = new WaveformMenu();
-	}
-
-	function WaveformMenu() {
+	/*function WaveformMenu() {
 		// the x and y attributes in here are done horribly
 		this.menuElement = document.createElementNS(NS, 'rect');
 		this.menuElement.setAttributeNS(null, 'x', 2.5);
@@ -210,7 +186,7 @@ function Dot(definition, x, y) {
 				}
 			});
 		}
-	}
+	}*/
 	
 	//events
 	var conn = null;

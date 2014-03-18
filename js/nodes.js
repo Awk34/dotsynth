@@ -13,12 +13,33 @@ var DOT_LIST = [
 	{
 		name: "Oscillator",
 		shortName: "Osc",
+        changeType: function(type) {
+            switch(type) {
+                case "sine":
+                    this.parent.node.type = "sine";
+                    break;
+                case "square":
+                    this.parent.node.type = "square";
+                    break;
+                case "sawtooth":
+                    this.parent.node.type = "sawtooth";
+                    break;
+                case "triangle":
+                    this.parent.node.type = "triangle";
+                    break;
+                default:
+                    console.log("Unknown Oscillator Type. The know types are sine, square, sawtooth, and triangle. Node has been set to a default of 'sine'.");
+                    this.parent.node.type = "sine";
+                    break;
+            }
+        },
 		create: function() {
 			var tmp = context.createOscillator();
 			// tmp.type = "square";
 			// console.log(typeof(tmp.type));
 			// tmp.invScale(100);
 			tmp.start(0);
+            selfNode = tmp;
 			return tmp;
 		},
 		hue: 180,
