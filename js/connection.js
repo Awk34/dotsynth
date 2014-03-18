@@ -1,6 +1,6 @@
 //connections! 
-function connection(sourceDot) {
-	var selfConn = this;
+function Connection(sourceDot) {
+	//var selfConn = this;
 	var parent = this.parentElement = sourceDot.parentElement;
 	var source = sourceDot;
 	var dest = null;
@@ -43,16 +43,16 @@ function connection(sourceDot) {
 		str += "L " + (startX > endX ? CONNECTION_SVG_PADDING : width-CONNECTION_SVG_PADDING)
 				+ " " + (startY > endY ? CONNECTION_SVG_PADDING : height-CONNECTION_SVG_PADDING) + "\n";
 		this.lineElement.setAttributeNS(null, 'd', str);
-	}
+	};
 	
 	this.endAt = function(x,y) {
 		endX = x;
 		endY = y;
 		this.redraw();
-	}
+	};
 	this.finalize = function(target) {
 		//if .object has a dot attached to it...
-		if (target.object && Object.getPrototypeOf(target.object) == dot.prototype && target.object != source) {
+		if (target.object && Object.getPrototypeOf(target.object) == Dot.prototype && target.object != source) {
 			dest = target.object;
 			source.connections.push(this);
 			dest.connections.push(this);

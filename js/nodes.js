@@ -46,9 +46,7 @@ var DOT_LIST = [
 					 * I'm not sure why it was here anyway
 					 * I changed it so the final frequency is a Math.floor
 					 */
-					var d = 128*percent;
-					var f = Math.pow(2,(d-69)/12)*440;
-					return f;
+					return Math.pow(2,((128*percent)-69)/12)*440;
 				},
 				invScale: function(value) {
 					/*
@@ -77,9 +75,7 @@ var DOT_LIST = [
 			{
 				name: "frequency",
 				scale: function(percent) {
-					var d = 128*percent;
-					var f = Math.pow(2,(d-69)/12)*60;
-					return f;
+					return Math.pow(2,((128*percent)-69)/12)*60;
 				},
 				invScale: function(value) {
 					/*
@@ -276,7 +272,7 @@ var DOT_LIST = [
 				hue: 120
 			}
 		]
-	},
+	}
 	/*{
 		name: "Panner",
 		shortName: "Pan",
@@ -308,7 +304,7 @@ var DOT_LIST = [
 			}
 		]
 	}*/
-]
+];
 
 
 

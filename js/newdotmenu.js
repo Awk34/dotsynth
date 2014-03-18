@@ -39,7 +39,7 @@ addListeners(document, {onHoldStart: function(e) {
 			circle.setAttributeNS(null, 'fill', 'hsla(' + DOT_LIST[i].hue + ', 100%, ' + DOT_LIGHTNESS + ', 1)');
 			circle.dotDefinition = DOT_LIST[i];
 			addListeners(circle, {onTapStart: function(e) {
-				newDot = new dot(e.element.dotDefinition, e.mmX, e.mmY);
+				newDot = new Dot(e.element.dotDefinition, e.mmX, e.mmY);
 				nodeArray.push(newDot);
 				self.isVisible = false;
 				newDotMenu.classList.add('hidden');

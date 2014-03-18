@@ -1,7 +1,7 @@
 /**
  * Creates a new dot with all of its DOM elements
  */
-function dot(definition, x, y) {
+function Dot(definition, x, y) {
 	var selfDot = this;
 	var parent = this.parentElement = document.body;
 	this.definition = definition;
@@ -56,7 +56,7 @@ function dot(definition, x, y) {
 
 	this.arcs = [];
 	
-	var paramList = definition.parameters
+	var paramList = definition.parameters;
 	for (var i = 0; i < paramList.length; i++) {
 		var endAngle = 3*Math.PI/2 - i/paramList.length * 2*Math.PI;
 		var startAngle = endAngle  - 1/paramList.length * 2*Math.PI;
@@ -64,7 +64,7 @@ function dot(definition, x, y) {
 			startAngle += 2*Math.PI;
 			endAngle += 2*Math.PI;
 		}
-		this.arcs.push(new arc(this.svgElement, startAngle, endAngle, paramList[i]));
+		this.arcs.push(new Arc(this.svgElement, startAngle, endAngle, paramList[i]));
 	}
 	
 	this.svgElement.appendChild(this.centerElement);
@@ -84,16 +84,16 @@ function dot(definition, x, y) {
 		// console.log('open');
 		isOpen = true;
 		this.svgElement.classList.add('opened');
-	}
+	};
 	this.close = function() {
 		// console.log('close');
 		isOpen = false;
 		this.svgElement.classList.remove('opened');
-	}
+	};
 	this.toggle = function() {
 		if (isOpen) selfDot.close();
 		else selfDot.open();
-	}
+	};
 
 	//function for changing oscillator type
 	if(selfDot.definition.name == "Oscillator") {
@@ -115,7 +115,7 @@ function dot(definition, x, y) {
 					console.log("Unknown Oscillator Type. The know types are sine, square, sawtooth, and triangle. Node has been set to a default of 'sine'.");
 					break;
 			}
-		}
+		};
 		//type = prompt("Enter the oscillator type here", "sine, square, sawtooth, or triangle");
 		//selfDot.changeType(type);
 		selfDot.waveformMenu = new WaveformMenu();
@@ -216,7 +216,7 @@ function dot(definition, x, y) {
 	var conn = null;
 	addListeners(this.centerElement, {
 		onHoldStart: function(e) {navigator.vibrate(HOLD_EFFECT_VIBRATE_TIME);},
-		onHoldDragStart: function(e) {conn = new connection(selfDot);},
+		onHoldDragStart: function(e) {conn = new Connection(selfDot);},
 		onHoldDragMove: function(e) {conn.endAt(e.mmX, e.mmY)},
 		onDragMove: function(e) {
 			selfDot.x = e.mmX;
@@ -228,10 +228,10 @@ function dot(definition, x, y) {
 		onTapEnd: function(e) {selfDot.toggle();}
 	});
 	
-	function arc(parent, start, end, definition) {
+	function Arc(parent, start, end, definition) {
 		var selfArc = this;
 		this.definition = definition;
-		this.paramName = definition.name;
+//		this.paramName = definition.name;
 		
 		var clipPathId = CLIP_PATH_ID++;
 		this.pathElement = document.createElementNS(NS, 'path');
@@ -400,7 +400,7 @@ function dot(definition, x, y) {
 			// console.log("Percent: "+selfArc.definition.invScale(value));
 			// console.log("Definition: "+selfArc.definition.name);
 			drawIndicator(selfArc.definition.invScale(value));
-		}
+		};
 		
 		//arc events
 		addListeners(this.pathElement, {
