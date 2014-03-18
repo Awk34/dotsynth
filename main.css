@@ -91,9 +91,12 @@ text {
 .hidden {
     display: none;
 }
-.waveformMenu {}
 .closed {
     visibility: hidden;
     pointer-events: none;
 }
-.waveformMenu.button {}
+.dot.name {
+	text-anchor: middle;
+	dominant-baseline: middle;
+	fill: black;
+}

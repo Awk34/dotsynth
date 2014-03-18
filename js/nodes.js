@@ -2,6 +2,7 @@ var DOT_LIST = [
 	{
 		name: "Output",
 		shortName: "Out",
+		className: "output",
 		canTakeInput: true,
 		create: function() {
 			var tmp = context.destination;
@@ -15,6 +16,7 @@ var DOT_LIST = [
 	{
 		name: "Oscillator",
 		shortName: "Osc",
+		className: "oscillator",
 		canTakeInput: false,
         changeType: function(type) {
             switch(type) {
@@ -49,6 +51,7 @@ var DOT_LIST = [
 		parameters: [
 			{
 				name: "detune",
+				className: "detune",
 				scale: function(percent) {
 					return (percent-.5)*9600;
 				},
@@ -65,6 +68,7 @@ var DOT_LIST = [
 			},
 			{
 				name: "frequency",
+				className: "frequency",
 				scale: function(percent) {
 					/* Warning: floor function was removed from here. I didn't hear an audible difference.
 					 * I'm not sure why it was here anyway
@@ -88,6 +92,7 @@ var DOT_LIST = [
 	},
 	{
 		name: "Low Frequency Oscillator",
+		className: "lfo",
 		shortName: "LFO",
 		canTakeInput: false,
 		create: function() {
@@ -99,6 +104,7 @@ var DOT_LIST = [
 		parameters: [
 			{
 				name: "frequency",
+				className: "frequency",
 				scale: function(percent) {
 					return Math.pow(2,((128*percent)-69)/12)*60;
 				},
@@ -128,6 +134,7 @@ var DOT_LIST = [
 		parameters: [
 			{
 				name: "gain",
+				className: "gain",
 				scale: function(percent) {
 					return percent;
 				},
@@ -147,6 +154,7 @@ var DOT_LIST = [
 	{
 		name: "Delay",
 		shortName: "Delay",
+		className: "delay",
 		canTakeInput: true,
 		create: function() {
 			return context.createDelay();
@@ -155,6 +163,7 @@ var DOT_LIST = [
 		parameters: [
 			{
 				name: "delayTime",
+				className: "delay",
 				scale: function(percent) {
 					//min: 0.0, max: 1.0
 					return percent;
@@ -192,6 +201,7 @@ var DOT_LIST = [
 	{
 		name: "Compressor",
 		shortName: "Comp",
+		className: "compressor",
 		canTakeInput: true,
 		create: function() {
 			return context.createDynamicsCompressor();
@@ -202,6 +212,7 @@ var DOT_LIST = [
 				// threshold
 				// The decibel value above which the compression will start taking effect. Its default value is -24, with a nominal range of -100 to 0.
 				name: "threshold",
+				className: "threshold",
 				scale: function(percent) {
 					return (percent-1)*100;
 				},
@@ -220,6 +231,7 @@ var DOT_LIST = [
 				// knee
 				// A decibel value representing the range above the threshold where the curve smoothly transitions to the "ratio" portion. Its default value is 30, with a nominal range of 0 to 40.
 				name: "knee",
+				className: "knee",
 				scale: function(percent) {
 					return percent*40;
 				},
@@ -238,6 +250,7 @@ var DOT_LIST = [
 				// ratio
 				// The amount of dB change in input for a 1 dB change in output. Its default value is 12, with a nominal range of 1 to 20.
 				name: "ratio",
+				className: "ratio",
 				scale: function(percent) {
 					return percent*19 + 1;
 				},
@@ -268,6 +281,7 @@ var DOT_LIST = [
 				// attack
 				// The amount of time (in seconds) to reduce the gain by 10dB. Its default value is 0.003, with a nominal range of 0 to 1.
 				name: "attack",
+				className: "attack",
 				scale: function(percent) {
 					return percent;
 				},
@@ -286,6 +300,7 @@ var DOT_LIST = [
 				// release
 				// The amount of time (in seconds) to increase the gain by 10dB. Its default value is 0.250, with a nominal range of 0 to 1.
 				name: "release",
+				className: "release",
 				scale: function(percent) {
 					return percent;
 				},
