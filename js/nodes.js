@@ -5,13 +5,30 @@ var DOT_LIST = [
 		className: "output",
 		canTakeInput: true,
 		create: function() {
-			var tmp = context.destination;
-			tmp.connections = [];
+			var tmp = context.createGain();
+			tmp.connect(context.destination);
 			return tmp;
 		},
-		//huehuehue
 		hue: 300,
-		parameters: []
+		parameters: [
+			{
+				name: "gain",
+				className: "gain",
+				scale: function(percent) {
+					return percent;
+				},
+				invScale: function(value) {
+					/*
+					 * 'value' ranges from 0 to 1
+					 * defaultValue: 1
+					 * minValue: 0
+					 * maxValue: 1
+					 */
+					return value;
+				},
+				hue: 0
+			}
+		]
 	},
 	{
 		name: "Oscillator",
