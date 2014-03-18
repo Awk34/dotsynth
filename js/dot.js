@@ -14,7 +14,7 @@ function Dot(definition, x, y) {
 	this.svgElement.setAttributeNS(null, 'viewBox','0 0 ' + SVG_SIZE + ' ' + SVG_SIZE);
 	this.svgElement.setAttributeNS(null, 'id', Math.floor(Math.random()*1000000000));
 	this.svgElement.style.position = "absolute";
-    this.optionsMenu = new OptionsMenu(this.definition);
+    //this.optionsMenu = new OptionsMenu(this.definition);
 	parent.appendChild(this.svgElement);
 	
 	Object.defineProperty(this, 'x', {
