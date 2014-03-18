@@ -7,6 +7,7 @@ function Dot(definition, x, y) {
 	var selfDot = this;
 	var parent = this.parentElement = document.body;
 	this.definition = definition;
+    this.definition.parent = selfDot;
 	this.connections = [];
 	this.node = definition.create();
 	this.svgElement = document.createElementNS(NS, "svg");
@@ -15,6 +16,7 @@ function Dot(definition, x, y) {
 	this.svgElement.setAttributeNS(null, 'viewBox','0 0 ' + SVG_SIZE + ' ' + SVG_SIZE);
 	this.svgElement.setAttributeNS(null, 'id', Math.floor(Math.random()*1000000000));
 	this.svgElement.style.position = "absolute";
+    //this.optionsMenu = new OptionsMenu(this.definition);
 	parent.appendChild(this.svgElement);
 	
 	Object.defineProperty(this, 'x', {
@@ -68,7 +70,7 @@ function Dot(definition, x, y) {
 	
 	this.arcs = [];
 	
-	var paramList = definition.parameters
+	var paramList = definition.parameters;
 	for (var i = 0; i < paramList.length; i++) {
 		var endAngle = 3*Math.PI/2 - i/paramList.length * 2*Math.PI;
 		var startAngle = endAngle  - 1/paramList.length * 2*Math.PI;
@@ -77,7 +79,6 @@ function Dot(definition, x, y) {
 			endAngle += 2*Math.PI;
 		}
 		this.arcs.push(new Arc(this.gArcsElement, startAngle, endAngle, paramList[i]));
-		
 	}
 	
 	this.gCenterElement.appendChild(this.centerElement);
@@ -100,16 +101,107 @@ function Dot(definition, x, y) {
 		selfDot.isOpen = true;
 		this.svgElement.classList.add('opened');
 		updateArcsClipPath();
-	}
+	};
 	this.close = function() {
 		selfDot.isOpen = false;
 		this.svgElement.classList.remove('opened');
 		updateArcsClipPath();
-	}
+	};
 	this.toggle = function() {
 		if (selfDot.isOpen) selfDot.close();
 		else selfDot.open();
-	}
+	};
+
+	/*function WaveformMenu() {
+		// the x and y attributes in here are done horribly
+		this.menuElement = document.createElementNS(NS, 'rect');
+		this.menuElement.setAttributeNS(null, 'x', 2.5);
+		this.menuElement.setAttributeNS(null, 'y', 2.5);
+		this.menuElement.setAttributeNS(null, 'height', SVG_SIZE/4 + UNITS);
+		this.menuElement.setAttributeNS(null, 'width', SVG_SIZE/4 + UNITS);
+		this.menuElement.setAttributeNS(null, 'rx', 15);
+		this.menuElement.setAttributeNS(null, 'ry', 15);
+		this.menuElement.setAttributeNS(null, 'fill', '#333');
+		this.menuElement.setAttributeNS(null, 'fill-opacity', '50%');
+		this.menuElement.classList.add('waveformMenu');
+		this.menuElement.object = this;
+		selfDot.svgElement.appendChild(this.menuElement);
+
+		this.buttons = [];
+		this.text = [];
+
+		//make the buttons
+		for(i=0; i<4; i++) {
+			this.buttonElement = document.createElementNS(NS, 'rect');
+			this.buttonTextElement = document.createElementNS(NS, 'text');
+			switch(i) {
+				case 0:
+					this.buttonElement.setAttributeNS(null, 'x', 7);
+					this.buttonElement.setAttributeNS(null, 'y', 7.5);
+					this.buttonElement.setAttributeNS(null, 'id', 'sine');
+					this.buttonTextElement.setAttributeNS(null, 'x', 26);
+					this.buttonTextElement.setAttributeNS(null, 'y', 28);
+					this.buttonTextElement.innerHTML = 'Sine';
+					break;
+				case 1:
+					this.buttonElement.setAttributeNS(null, 'x', 54.5);
+					this.buttonElement.setAttributeNS(null, 'y', 7.5);
+					this.buttonElement.setAttributeNS(null, 'id', 'square');
+					this.buttonTextElement.setAttributeNS(null, 'x', 73);
+					this.buttonTextElement.setAttributeNS(null, 'y', 28);
+					this.buttonTextElement.innerHTML = 'Square';
+					break;
+				case 2:
+					this.buttonElement.setAttributeNS(null, 'x', 7);
+					this.buttonElement.setAttributeNS(null, 'y', 55);
+					this.buttonElement.setAttributeNS(null, 'id', 'sawtooth');
+					this.buttonTextElement.setAttributeNS(null, 'x', 26);
+					this.buttonTextElement.setAttributeNS(null, 'y', 75);
+					this.buttonTextElement.innerHTML = 'Sawtooth';
+					break;
+				case 3:
+					this.buttonElement.setAttributeNS(null, 'x', 54.5);
+					this.buttonElement.setAttributeNS(null, 'y', 55);
+					this.buttonElement.setAttributeNS(null, 'id', 'triangle');
+					this.buttonTextElement.setAttributeNS(null, 'x', 73);
+					this.buttonTextElement.setAttributeNS(null, 'y', 75);
+					this.buttonTextElement.innerHTML = 'Triangle';
+					break;
+			}
+			this.buttonElement.setAttributeNS(null, 'height', MENU_BUTTON_SIZE + UNITS);
+			this.buttonElement.setAttributeNS(null, 'width', MENU_BUTTON_SIZE + UNITS);
+			this.buttonElement.setAttributeNS(null, 'rx', 10);
+			this.buttonElement.setAttributeNS(null, 'ry', 10);
+			this.buttonElement.setAttributeNS(null, 'fill', '#333');
+			this.buttonElement.setAttributeNS(null, 'fill-opacity', '50%');
+			this.buttonElement.classList.add('button');
+			selfDot.svgElement.appendChild(this.buttonElement);
+			this.buttons.push(this.buttonElement);
+
+			this.buttonTextElement.setAttributeNS(null, 'text-anchor', 'middle');
+			this.buttonTextElement.setAttributeNS(null, 'dominant-baseline', 'middle');
+			this.buttonTextElement.setAttributeNS(null, 'font-size', DOT_NAME_SIZE);
+			this.buttonTextElement.setAttributeNS(null, 'fill', 'White');
+			selfDot.svgElement.appendChild(this.buttonTextElement);
+			this.text.push(this.buttonTextElement);
+		}
+
+		//add listeners to each button
+		for(i=0; i<this.buttons.length; i++) {
+			addListeners(this.buttons[i], {
+				onTapEnd: function(e) {
+					//change the oscillator type based on the ID of the button clicked
+					selfDot.changeType(e.element.id);
+					//hide all of the menu elements
+					selfDot.waveformMenu.menuElement.classList.add('closed');
+					for(j=0; j<selfDot.waveformMenu.buttons.length; j++) {
+						selfDot.waveformMenu.buttons[j].classList.add('closed');
+						selfDot.waveformMenu.text[j].classList.add('closed');
+					}
+				}
+			});
+		}
+	}*/
 	
 	//events
 	var conn = null;
@@ -153,7 +245,7 @@ function Dot(definition, x, y) {
 	function Arc(parent, start, end, definition) {
 		var selfArc = this;
 		this.definition = definition;
-		this.paramName = definition.name;
+//		this.paramName = definition.name;
 		
 		var clipPathId = CLIP_PATH_ID++;
 		this.gElement = document.createElementNS(NS, 'g');
@@ -228,8 +320,6 @@ function Dot(definition, x, y) {
 			str += "A "+SVG_SIZE/2+" "+SVG_SIZE/2+" 0 0 0 "+startPoint.x+" "+startPoint.y+"\n";
 			selfArc.indicatorElement.setAttributeNS(null, 'd', str);
 		}
-		//set default arc position to 50%
-		// drawIndicator(.5);
 		//set default arc position to its node's default value's position
 		drawIndicator(selfArc.definition.invScale(selfDot.node[selfArc.definition.name].value));
 		
@@ -328,7 +418,7 @@ function Dot(definition, x, y) {
 			// console.log("Percent: "+selfArc.definition.invScale(value));
 			// console.log("Definition: "+selfArc.definition.name);
 			drawIndicator(selfArc.definition.invScale(value));
-		}
+		};
 		
 		//arc events
 		addListeners(this.pathElement, {

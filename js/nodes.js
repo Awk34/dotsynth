@@ -16,12 +16,33 @@ var DOT_LIST = [
 		name: "Oscillator",
 		shortName: "Osc",
 		canTakeInput: false,
+        changeType: function(type) {
+            switch(type) {
+                case "sine":
+                    this.parent.node.type = "sine";
+                    break;
+                case "square":
+                    this.parent.node.type = "square";
+                    break;
+                case "sawtooth":
+                    this.parent.node.type = "sawtooth";
+                    break;
+                case "triangle":
+                    this.parent.node.type = "triangle";
+                    break;
+                default:
+                    console.log("Unknown Oscillator Type. The know types are sine, square, sawtooth, and triangle. Node has been set to a default of 'sine'.");
+                    this.parent.node.type = "sine";
+                    break;
+            }
+        },
 		create: function() {
 			var tmp = context.createOscillator();
-			tmp.type = "square";
-			//console.log(typeof(tmp.type));
-			//tmp.invScale(100);
+			// tmp.type = "square";
+			// console.log(typeof(tmp.type));
+			// tmp.invScale(100);
 			tmp.start(0);
+            selfNode = tmp;
 			return tmp;
 		},
 		hue: 180,
@@ -49,9 +70,7 @@ var DOT_LIST = [
 					 * I'm not sure why it was here anyway
 					 * I changed it so the final frequency is a Math.floor
 					 */
-					var d = 128*percent;
-					var f = Math.pow(2,(d-69)/12)*440;
-					return f;
+					return Math.pow(2,((128*percent)-69)/12)*440;
 				},
 				invScale: function(value) {
 					/*
@@ -81,9 +100,7 @@ var DOT_LIST = [
 			{
 				name: "frequency",
 				scale: function(percent) {
-					var d = 128*percent;
-					var f = Math.pow(2,(d-69)/12)*60;
-					return f;
+					return Math.pow(2,((128*percent)-69)/12)*60;
 				},
 				invScale: function(value) {
 					/*
@@ -284,7 +301,7 @@ var DOT_LIST = [
 				hue: 120
 			}
 		]
-	},
+	}
 	/*{
 		name: "Panner",
 		shortName: "Pan",
@@ -318,7 +335,7 @@ var DOT_LIST = [
 			}
 		]
 	}*/
-]
+];
 
 
 

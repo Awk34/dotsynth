@@ -1,4 +1,4 @@
-var NS = 'http://www.w3.org/2000/svg'
+var NS = 'http://www.w3.org/2000/svg';
 var UNITS = 'mm';
 var DOT_RADIUS = 10;
 var SVG_SIZE = 100;
@@ -16,10 +16,12 @@ var HOLD_EFFECT_VIBRATE_TIME = 100;
 var CONNECTION_WIDTH = 2;
 var CONNECTION_SVG_PADDING = 5;
 var DOT_NAME_SIZE = 7;
+var MENU_BUTTON_SIZE = 10;
 
 var DOT_LIGHTNESS = "30%";
 var CONNECTION_LIGHTNESS = "30%";
-var INDICATOR_LIGHTNESS = "50%"
+//v currently unused v
+var INDICATOR_LIGHTNESS = "50%";
 
 //physics
 var DOT_PHYSICS_RADIUS = DOT_RADIUS + ARC_WIDTH/2 + GAP_WIDTH;
