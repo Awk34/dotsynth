@@ -15,8 +15,9 @@ function toggle(obj) {
     else
         e.style.display = 'none';
 }
-addListeners(helptext, {onTapEnd: function(){ helptext.classList.toggle('hidden'); }});
-addListeners(help, {onTapEnd: function(){ helptext.classList.toggle('hidden'); }});
+addListeners(helptext, {onTapEnd: function() { helptext.classList.toggle('hidden') }});
+addListeners(help, {onTapEnd: function() { helptext.classList.toggle('hidden') }});
+addListeners(undobutton, {onTapEnd: function() { undo() }});
 
 function Action(context, type) {
     this.context = context;
@@ -28,7 +29,7 @@ function undo() {
     if(undoStack.length == 0) return;
     var thisAction = undoStack.pop();
     redoStack.push(thisAction);
-    console.log("Undoing "+thisAction);
+    //console.log("Undoing "+thisAction);
 
     switch(thisAction.type) {
         case "create":
