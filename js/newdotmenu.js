@@ -40,7 +40,6 @@ addListeners(document, {onHoldStart: function(e) {
 			circle.dotDefinition = DOT_LIST[i];
 			addListeners(circle, {onTapStart: function(e) {
 				newDot = new Dot(e.element.dotDefinition, e.mmX, e.mmY);
-				nodeArray.push(newDot);
 				self.isVisible = false;
 				newDotMenu.classList.add('hidden');
 			}});

@@ -11,7 +11,37 @@ var DOT_LIST = [
 		},
 		//huehuehue
 		hue: 300,
-		parameters: []
+		parameters: [],
+        options: [
+            {
+                name: "Output Device",
+                type: "dropdown",    //could be an object
+                items: [
+                    {
+                        name: "Item1"
+                        //image: an svg image, perhaps
+                    },
+                    {
+                        name: "Item2"
+                    },
+                    {
+                        name: "Item3"
+                    }
+                ]
+            },
+            {
+                name: "Other Thing",
+                type: "slider",
+                min: 0,
+                max: 1
+            },
+            {
+                name: "Another Thing",
+                type: "text",
+                min: -10000,
+                max: 10000
+            }
+        ]
 	},
 	{
 		name: "Oscillator",

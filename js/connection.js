@@ -1,11 +1,11 @@
-//connections! 
+//connections!
 function Connection(sourceDot) {
 	var selfConn = this;
 	var parent = this.parentElement = sourceDot.parentElement;
 	var source = sourceDot;
 	var dest = null;
-	//sourceDot.connections.push(this);
-	//destDot.connections.push(this);
+    this.thisSource = sourceDot;
+    this.thisDest = null;
 	var endX;
 	var endY;
 	
@@ -38,10 +38,8 @@ function Connection(sourceDot) {
 		this.svgElement.setAttributeNS(null, 'viewBox', '0 0 ' + (Math.abs(startX - endX) + 2*CONNECTION_SVG_PADDING) + ' ' + (Math.abs(startY - endY) + 2*CONNECTION_SVG_PADDING));
 	
 		//draw line
-		var str = "M " + (startX < endX ? CONNECTION_SVG_PADDING : width-CONNECTION_SVG_PADDING)
-				+ " " + (startY < endY ? CONNECTION_SVG_PADDING : height-CONNECTION_SVG_PADDING) + "\n";
-		str += "L " + (startX > endX ? CONNECTION_SVG_PADDING : width-CONNECTION_SVG_PADDING)
-				+ " " + (startY > endY ? CONNECTION_SVG_PADDING : height-CONNECTION_SVG_PADDING) + "\n";
+		var str = "M " + (startX < endX ? CONNECTION_SVG_PADDING : width-CONNECTION_SVG_PADDING) + " " + (startY < endY ? CONNECTION_SVG_PADDING : height-CONNECTION_SVG_PADDING) + "\n";
+		str += "L " + (startX > endX ? CONNECTION_SVG_PADDING : width-CONNECTION_SVG_PADDING) + " " + (startY > endY ? CONNECTION_SVG_PADDING : height-CONNECTION_SVG_PADDING) + "\n";
 		this.lineElement.setAttributeNS(null, 'd', str);
 	};
 	
@@ -54,8 +52,10 @@ function Connection(sourceDot) {
 		//if .object has a dot attached to it, and if it can take input...
 		if (target.object && Object.getPrototypeOf(target.object) == Dot.prototype && target.object != source && target.object.definition.canTakeInput) {
 			dest = target.object;
+            this.thisDest = target.object;
 			source.connections.push(this);
 			dest.connections.push(this);
+            undoStack.push(new Action(this, "connect"));
 			source.node.connect(dest.node);
 			this.redraw();
 		} else {

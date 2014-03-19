@@ -1,4 +1,6 @@
 var NS = 'http://www.w3.org/2000/svg';
+
+//SVG
 var UNITS = 'mm';
 var DOT_RADIUS = 10;
 var SVG_SIZE = 100;
@@ -24,7 +26,6 @@ var CONNECTION_WIDTH = 2;
 var CONNECTION_SVG_PADDING = 5;
 var DOT_NAME_SIZE = 7;
 var MENU_BUTTON_SIZE = 10;
-
 var DOT_LIGHTNESS = "30%";
 var DOT_SATURATION = "100%";
 var DOT_ALPHA = "1";
@@ -33,6 +34,8 @@ var CONNECTION_LIGHTNESS = "30%";
 //physics
 var DOT_PHYSICS_RADIUS = DOT_RADIUS + ARC_WIDTH/2 + GAP_WIDTH;
 var GRID_SIZE = DOT_PHYSICS_RADIUS*1.4;
-
 var CONTINUOUS_PHYSICS = false;
-var nodeArray = [];
+
+//Undo/Redo
+var MAX_UNDO = 20;
+var MAX_REDO = 20;
