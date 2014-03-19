@@ -204,10 +204,8 @@ function Dot(definition, x, y) {
 	
 	//events
 	var conn = null;
-	addListeners(this.centerElement, {
+	var callbackListeners = {
 		onHoldStart: function(e) {navigator.vibrate(HOLD_EFFECT_VIBRATE_TIME);},
-		onHoldDragStart: function(e) {conn = new Connection(selfDot);},
-		onHoldDragMove: function(e) {conn.endAt(e.mmX, e.mmY)},
 		onDragStart: function(e) {
 			//move to front
 			selfDot.svgElement.parentNode.appendChild(selfDot.svgElement);
@@ -235,11 +233,32 @@ function Dot(definition, x, y) {
 				updateArcsClipPath();
 			}
 		},
-		onHoldDragEnd: function(e) {
-			conn.finalize(document.elementFromPoint(e.clientX, e.clientY))
-		},
 		onTapEnd: function(e) {selfDot.toggle();}
-	});
+	};
+	if (definition.noOutput) {
+		callbackListeners.onHoldDragStart = function(e) {
+			//TODO: inform the user that this node does
+			//      not have any outputs, and therefore
+			//      cannot be the starting point of a
+			//      connection.
+		}
+		//TODO: BUG: for some reason, the lack of the
+		//      two following functions causes an error.
+		callbackListeners.onHoldDragMove = function(){};
+		callbackListeners.onHoldDragEnd = function(){};
+	} else {
+		//there's output. Allow this node to connect to others.
+		callbackListeners.onHoldDragStart = function(e) {
+			conn = new Connection(selfDot);
+		};
+		callbackListeners.onHoldDragMove = function(e) {
+			conn.endAt(e.mmX, e.mmY)
+		};
+		callbackListeners.onHoldDragEnd = function(e) {
+			conn.finalize(document.elementFromPoint(e.clientX, e.clientY))
+		};
+	}
+	addListeners(this.centerElement, callbackListeners);
 	
 	function Arc(parent, start, end, definition) {
 		var selfArc = this;

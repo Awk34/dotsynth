@@ -4,6 +4,7 @@ var DOT_LIST = [
 		shortName: "Out",
 		className: "output",
 		canTakeInput: true,
+		noOutput: true,
 		create: function() {
 			var tmp = context.createGain();
 			tmp.connect(context.destination);
