@@ -418,9 +418,9 @@ function Dot(definition, x, y) {
 		
 		//arc events
 		addListeners(this.pathElement, {
-			onTapStart: function(e) {modifyValue(e.pxX, e.pxY);},
-			onDragMove: function(e) {modifyValue(e.pxX, e.pxY);},
-			onTapEnd:   function(e) {modifyValue(e.pxX, e.pxY);}
+			onTapStart: function(e) {modifyValue(e.pxX + DOT_CONTAINER.scrollLeft, e.pxY + DOT_CONTAINER.scrollTop);},
+			onDragMove: function(e) {modifyValue(e.pxX + DOT_CONTAINER.scrollLeft, e.pxY + DOT_CONTAINER.scrollTop);},
+			onTapEnd:   function(e) {modifyValue(e.pxX + DOT_CONTAINER.scrollLeft, e.pxY + DOT_CONTAINER.scrollTop);}
 		});
 	}
 	Physics.add(this);
