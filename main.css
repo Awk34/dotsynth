@@ -13,6 +13,7 @@ body p {
 #menu-right {
     position: absolute;
     right: 0;
+    margin: 1mm;
 }
 #menu-right * {
     margin: 0 1mm 0 1mm;
