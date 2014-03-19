@@ -5,7 +5,7 @@ var dotList = [];
 function Dot(definition, x, y) {
 	dotList.push(this);
 	var selfDot = this;
-	var parent = this.parentElement = document.body;
+	var parent = this.parentElement = DOT_CONTAINER;
 	this.definition = definition;
     this.definition.parent = selfDot;
 	this.connections = [];
@@ -207,7 +207,7 @@ function Dot(definition, x, y) {
 	addListeners(this.centerElement, {
 		onHoldStart: function(e) {navigator.vibrate(HOLD_EFFECT_VIBRATE_TIME);},
 		onHoldDragStart: function(e) {conn = new Connection(selfDot);},
-		onHoldDragMove: function(e) {conn.endAt(e.mmX, e.mmY)},
+		onHoldDragMove: function(e) {conn.endAt(e.mmX+pxToMm(DOT_CONTAINER.scrollLeft), e.mmY+pxToMm(DOT_CONTAINER.scrollTop))},
 		onDragStart: function(e) {
 			//move to front
 			selfDot.svgElement.parentNode.appendChild(selfDot.svgElement);
@@ -219,8 +219,8 @@ function Dot(definition, x, y) {
 		onDragMove: function(e) {
 			if (CONTINUOUS_PHYSICS)
 				Physics.remove(selfDot);
-			selfDot.x = e.mmX;
-			selfDot.y = e.mmY;
+			selfDot.x = e.mmX+pxToMm(DOT_CONTAINER.scrollLeft);
+			selfDot.y = e.mmY+pxToMm(DOT_CONTAINER.scrollTop);
 			if (CONTINUOUS_PHYSICS) {
 				Physics.add(selfDot);
 				updateArcsClipPath();

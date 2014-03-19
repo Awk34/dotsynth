@@ -36,3 +36,5 @@ var GRID_SIZE = DOT_PHYSICS_RADIUS*1.4;
 
 var CONTINUOUS_PHYSICS = false;
 var nodeArray = [];
+
+var DOT_CONTAINER = document.getElementById('workspace');

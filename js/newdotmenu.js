@@ -1,11 +1,11 @@
-addListeners(document, {onHoldStart: function(e) {
+addListeners(DOT_CONTAINER, {onHoldStart: function(e) {
 	var self = this;
 	this.isVisible = false;
 	if (this.newDotMenu == undefined) {
 		//first-time set-up
 		this.newDotMenu = document.createElementNS(NS, 'svg');
 		this.newDotMenu.classList.add('newDotMenu');
-		document.body.appendChild(this.newDotMenu);
+		DOT_CONTAINER.appendChild(this.newDotMenu);
 		//recreate this menu
 		var radius = layerRadius(DOT_LIST.length);
 		var size = (radius + DOT_RADIUS + GAP_WIDTH)*2;
@@ -39,7 +39,7 @@ addListeners(document, {onHoldStart: function(e) {
 			circle.setAttributeNS(null, 'fill', 'hsla(' + DOT_LIST[i].hue + ', 100%, ' + DOT_LIGHTNESS + ', 1)');
 			circle.dotDefinition = DOT_LIST[i];
 			addListeners(circle, {onTapStart: function(e) {
-				newDot = new Dot(e.element.dotDefinition, e.mmX, e.mmY);
+				newDot = new Dot(e.element.dotDefinition, e.mmX +pxToMm(DOT_CONTAINER.scrollLeft), e.mmY+pxToMm(DOT_CONTAINER.scrollTop));
 				nodeArray.push(newDot);
 				self.isVisible = false;
 				newDotMenu.classList.add('hidden');
@@ -56,8 +56,8 @@ addListeners(document, {onHoldStart: function(e) {
 		this.isVisible = true;
 		newDotMenu.classList.remove('hidden');
 		//TODO: make it show properly!
-		newDotMenu.style.left = e.pxX - newDotMenu.offsetWidth/2 + "px";
-		newDotMenu.style.top = e.pxY - newDotMenu.offsetHeight/2 + "px";
+		newDotMenu.style.left = e.pxX +DOT_CONTAINER.scrollLeft - newDotMenu.offsetWidth/2 + "px";
+		newDotMenu.style.top = e.pxY +DOT_CONTAINER.scrollTop - newDotMenu.offsetHeight/2 + "px";
 	}
 }});
 
