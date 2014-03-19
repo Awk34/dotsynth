@@ -33,6 +33,10 @@ function addListeners(element, listeners) {
 	var onHoldEnd = listeners.onHoldEnd;
 	var onDragEnd = listeners.onDragEnd;
 	var onHoldDragEnd = listeners.onHoldDragEnd;
+	
+	var allowScroll = !(onDragStart || onDragMove || onDragEnd)
+			&& !(onTapStart || onTapEnd);
+	
 	var self = this;
 	//keep track of when this object has focus;
 	//don't let multiple interactions happen at once.
@@ -105,7 +109,8 @@ function addListeners(element, listeners) {
 							if (onDragMove) onDragMove(returnEvent);
 						}
 					}
-					e.preventDefault();
+					if (hold || !allowScroll)
+						e.preventDefault();
 				}
 			}
 			function onTouchEnd(e) {
@@ -142,14 +147,16 @@ function addListeners(element, listeners) {
 					}
 					document.removeEventListener('touchmove', onTouchMove);
 					document.removeEventListener('touchend', onTouchEnd);
-					e.preventDefault();
+					if (hold || !allowScroll)
+						e.preventDefault();
 				}
 			}
 			document.addEventListener('touchmove', onTouchMove);
 			document.addEventListener('touchend', onTouchEnd);
 			//only stop propagation on interaction start (indicating that this event has been 'captured');
 			e.stopPropagation();
-			e.preventDefault();
+			if (!allowScroll)
+				e.preventDefault();
 		}
 	});
 	
