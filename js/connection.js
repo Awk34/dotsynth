@@ -43,13 +43,13 @@ function Connection(sourceDot) {
 		str += "L " + (startX > endX ? CONNECTION_SVG_PADDING : width-CONNECTION_SVG_PADDING)
 				+ " " + (startY > endY ? CONNECTION_SVG_PADDING : height-CONNECTION_SVG_PADDING) + "\n";
 		this.lineElement.setAttributeNS(null, 'd', str);
-	}
+	};
 	
 	this.endAt = function(x,y) {
 		endX = x;
 		endY = y;
 		this.redraw();
-	}
+	};
 	this.finalize = function(target) {
 		//if .object has a dot attached to it, and if it can take input...
 		dest = target.object;
