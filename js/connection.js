@@ -6,8 +6,8 @@ function Connection(sourceDot) {
 	var dest = null;
     this.thisSource = sourceDot;
     this.thisDest = null;
-	var endX;
-	var endY;
+	var endX = 0;
+	var endY = 0;
 	
 	this.svgElement = document.createElementNS(NS, 'svg');
 	this.svgElement.classList.add('connectionsvg');
@@ -26,9 +26,9 @@ function Connection(sourceDot) {
 		if (dest !== null) {
 			endX = dest.x;
 			endY = dest.y;
-            //console.log(dest);
-            //console.log("startX: "+startX+", startY: "+startY+", dest.x: "+dest.x+", dest.y: "+dest.y);
 		}
+        //NaN checking
+        if((startX-endX)!=(startX-endX) || (startY-endY)!=(startY-endY)) return;
 		//draw with startX/Y and endX/Y
 		//position SVG
 		var width = (Math.abs(startX - endX) + 2*CONNECTION_SVG_PADDING);
@@ -53,7 +53,6 @@ function Connection(sourceDot) {
 	this.finalize = function(target) {
 		//if .object has a dot attached to it, and if it can take input...
 		if (target.object && Object.getPrototypeOf(target.object) == Dot.prototype && target.object != source && target.object.definition.canTakeInput) {
-			//console.log(target.object);
             dest = target.object;
             this.thisDest = target.object;
 			source.connections.push(this);
@@ -61,6 +60,7 @@ function Connection(sourceDot) {
             undoStack.push(new Action(this, "connect"));
 			source.node.connect(dest.node);
 			this.redraw();
+            //console.log("Connection made from "+this.thisSource.definition.name+" to "+this.thisDest.definition.name);
 		} else {
 			if(target.object && !target.object.definition.canTakeInput) {
 				//The destination node doesn't take input

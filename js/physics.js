@@ -45,7 +45,7 @@
 		for (var i = 0; i < adj.length; i++) {
 			var dx = adj[i].x-dot.x;
 			var dy = adj[i].y-dot.y;
-			var distance = Math.sqrt(Math.pow(dx,2) + Math.pow(dy,2))
+			var distance = Math.sqrt(Math.pow(dx,2) + Math.pow(dy,2));
 			if (distance <= DOT_PHYSICS_RADIUS*2) {
 				removeDot(adj[i]);
 				var scale = DOT_PHYSICS_RADIUS*2.001/distance;

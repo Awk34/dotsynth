@@ -39,7 +39,7 @@ function Dot(definition, x, y) {
 			y = val;
 			selfDot.svgElement.style.top = (y - SVG_SIZE/2) + UNITS;
 			for (var i = 0; i < selfDot.connections.length; i++) {
-				selfDot.connections[i].redraw();
+                selfDot.connections[i].redraw();
 			}
 		}
 	});
@@ -110,97 +110,6 @@ function Dot(definition, x, y) {
 		if (selfDot.isOpen) selfDot.close();
 		else selfDot.open();
 	};
-
-	/*function WaveformMenu() {
-		// the x and y attributes in here are done horribly
-		this.menuElement = document.createElementNS(NS, 'rect');
-		this.menuElement.setAttribute('x', 2.5);
-		this.menuElement.setAttribute('y', 2.5);
-		this.menuElement.setAttribute('height', SVG_SIZE/4 + UNITS);
-		this.menuElement.setAttribute('width', SVG_SIZE/4 + UNITS);
-		this.menuElement.setAttribute('rx', 15);
-		this.menuElement.setAttribute('ry', 15);
-		this.menuElement.setAttribute('fill', '#333');
-		this.menuElement.setAttribute('fill-opacity', '50%');
-		this.menuElement.classList.add('waveformMenu');
-		this.menuElement.object = this;
-		selfDot.svgElement.appendChild(this.menuElement);
-
-		this.buttons = [];
-		this.text = [];
-
-		//make the buttons
-		for(i=0; i<4; i++) {
-			this.buttonElement = document.createElementNS(NS, 'rect');
-			this.buttonTextElement = document.createElementNS(NS, 'text');
-			switch(i) {
-				case 0:
-					this.buttonElement.setAttribute('x', 7);
-					this.buttonElement.setAttribute('y', 7.5);
-					this.buttonElement.setAttribute('id', 'sine');
-					this.buttonTextElement.setAttribute('x', 26);
-					this.buttonTextElement.setAttribute('y', 28);
-					this.buttonTextElement.innerHTML = 'Sine';
-					break;
-				case 1:
-					this.buttonElement.setAttribute('x', 54.5);
-					this.buttonElement.setAttribute('y', 7.5);
-					this.buttonElement.setAttribute('id', 'square');
-					this.buttonTextElement.setAttribute('x', 73);
-					this.buttonTextElement.setAttribute('y', 28);
-					this.buttonTextElement.innerHTML = 'Square';
-					break;
-				case 2:
-					this.buttonElement.setAttribute('x', 7);
-					this.buttonElement.setAttribute('y', 55);
-					this.buttonElement.setAttribute('id', 'sawtooth');
-					this.buttonTextElement.setAttribute('x', 26);
-					this.buttonTextElement.setAttribute('y', 75);
-					this.buttonTextElement.innerHTML = 'Sawtooth';
-					break;
-				case 3:
-					this.buttonElement.setAttribute('x', 54.5);
-					this.buttonElement.setAttribute('y', 55);
-					this.buttonElement.setAttribute('id', 'triangle');
-					this.buttonTextElement.setAttribute('x', 73);
-					this.buttonTextElement.setAttribute('y', 75);
-					this.buttonTextElement.innerHTML = 'Triangle';
-					break;
-			}
-			this.buttonElement.setAttribute('height', MENU_BUTTON_SIZE + UNITS);
-			this.buttonElement.setAttribute('width', MENU_BUTTON_SIZE + UNITS);
-			this.buttonElement.setAttribute('rx', 10);
-			this.buttonElement.setAttribute('ry', 10);
-			this.buttonElement.setAttribute('fill', '#333');
-			this.buttonElement.setAttribute('fill-opacity', '50%');
-			this.buttonElement.classList.add('button');
-			selfDot.svgElement.appendChild(this.buttonElement);
-			this.buttons.push(this.buttonElement);
-
-			this.buttonTextElement.setAttribute('text-anchor', 'middle');
-			this.buttonTextElement.setAttribute('dominant-baseline', 'middle');
-			this.buttonTextElement.setAttribute('font-size', DOT_NAME_SIZE);
-			this.buttonTextElement.setAttribute('fill', 'White');
-			selfDot.svgElement.appendChild(this.buttonTextElement);
-			this.text.push(this.buttonTextElement);
-		}
-
-		//add listeners to each button
-		for(i=0; i<this.buttons.length; i++) {
-			addListeners(this.buttons[i], {
-				onTapEnd: function(e) {
-					//change the oscillator type based on the ID of the button clicked
-					selfDot.changeType(e.element.id);
-					//hide all of the menu elements
-					selfDot.waveformMenu.menuElement.classList.add('closed');
-					for(j=0; j<selfDot.waveformMenu.buttons.length; j++) {
-						selfDot.waveformMenu.buttons[j].classList.add('closed');
-						selfDot.waveformMenu.text[j].classList.add('closed');
-					}
-				}
-			});
-		}
-	}*/
 	
 	//events
 	var conn = null;
@@ -424,106 +333,107 @@ function Dot(definition, x, y) {
 		});
 	}
 	Physics.add(this);
-	function updateArcsClipPath() {
-		//update EVERY dot. we're assuming that they all changed a little
-		//not the best assumption...
-		for (var i = 0; i < dotList.length; i++) {
-			var current = dotList[i];
-			current.arcsClipPath.innerHTML = '';
-			var others = Physics.adjacentTo(current);
-			
-			//start with SVG's bounding box...
-			var points = [
-				{x:0,y:0},
-				{x:SVG_SIZE,y:0},
-				{x:SVG_SIZE,y:SVG_SIZE},
-				{x:0,y:SVG_SIZE}
-			];
-			
-			//...and cut away at it.
-			if (current.isOpen && Physics.hasDot(current)) {
-				for (var j = 0; j < others.length; j++) {
-					var other = others[j];
-					if (!other.isOpen) continue;
-					//slice the clip path into 2 convex polygons,
-					//then check to see which is the one we want.
-					var dx = (other.x - current.x)/2;
-					var dy = (other.y - current.y)/2;
-					//reduce the distance by GAP_WIDTH/2;
-					var len = Math.sqrt(dx*dx+dy*dy);
-					var newlen = len - GAP_WIDTH/2;
-					dx *= newlen/len;
-					dy *= newlen/len;
-					
-					var cut1 = {
-						x: SVG_SIZE/2 + dx,
-						y: SVG_SIZE/2 + dy
-					}
-					var cut2 = {
-						x: SVG_SIZE/2 + dx+dy,
-						y: SVG_SIZE/2 + dy-dx
-					}
-					var intersections = [];
-					for (var k = 0; k < points.length; k++) {
-						var p1 = points[k];
-						var p2 = points[(k+1)%points.length];
-						//intersection finder:
-						var x1 = cut1.x, y1 = cut1.y, x2 = cut2.x, y2 = cut2.y,
-							x3 = p1.x, y3 = p1.y, x4 = p2.x, y4 = p2.y;
-						var intersection = {
-							x: ( (x1*y2-y1*x2)*(x3-x4)-(x1-x2)*(x3*y4-y3*x4) )/( (x1-x2)*(y3-y4)-(y1-y2)*(x3-x4) ),
-							y: ( (x1*y2-y1*x2)*(y3-y4)-(y1-y2)*(x3*y4-y3*x4) )/( (x1-x2)*(y3-y4)-(y1-y2)*(x3-x4) )
-						}
-						var isYDiffGreater = Math.abs(p2.y-p1.y) > Math.abs(p2.x-p1.x);
-						if (	(!isYDiffGreater && (intersection.x < p1.x ^ intersection.x < p2.x) )
-							||	( isYDiffGreater && (intersection.y < p1.y ^ intersection.y < p2.y) ) ) {
-							//at this line segment following point k, there is an intersection.
-							intersections.push({intersection:intersection, k:k});
-						}
-					}
-					//if there were 2 intersections, perform the cut
-					if (intersections.length === 2) {
-						var result = [];
-						//the intersection points
-						var i1 = intersections[0].intersection;
-						var i2 = intersections[1].intersection;
-						//the indexes of the line segments that they intersected
-						var k1 = intersections[0].k;
-						var k2 = intersections[1].k;
-						
-						var isLeft = ((i2.x - i1.x)*(SVG_SIZE/2 - i1.y) - (i2.y - i1.y)*(SVG_SIZE/2 - i1.x)) < 0;
-						if (isLeft) {
-							//go from k1's line to k2's line
-							result.push(i1);
-							for (var k = k1+1; k <= k2; k++) {
-								result.push(points[k]);
-							}
-							result.push(i2);
-						} else {
-							//go from k2's line to k1's line
-							result.push(i2);
-							for (var k = (k2+1)%points.length; k != (k1+1)%points.length; k = (k+1)%points.length) {
-								result.push(points[k]);
-							}
-							result.push(i1);
-						}
-						points = result;
-					}
-				}
-			}
-			//now that points[] represents the clipPath we want, generate that clipPath
-			var str = 'M ' + points[0].x + ' ' + points[0].y;
-			for (var j = 1; j < points.length; j++) {
-				str += 'L ' + points[j].x + ' ' + points[j].y;
-			}
-			var path = document.createElementNS(NS, 'path');
-			path.setAttribute('d', str);
-			current.arcsClipPath.appendChild(path);
-		}
-	}
+
 	updateArcsClipPath();
 }
 
+function updateArcsClipPath() {
+    //update EVERY dot. we're assuming that they all changed a little
+    //not the best assumption...
+    for (var i = 0; i < dotList.length; i++) {
+        var current = dotList[i];
+        current.arcsClipPath.innerHTML = '';
+        var others = Physics.adjacentTo(current);
+
+        //start with SVG's bounding box...
+        var points = [
+            {x:0,y:0},
+            {x:SVG_SIZE,y:0},
+            {x:SVG_SIZE,y:SVG_SIZE},
+            {x:0,y:SVG_SIZE}
+        ];
+
+        //...and cut away at it.
+        if (current.isOpen && Physics.hasDot(current)) {
+            for (var j = 0; j < others.length; j++) {
+                var other = others[j];
+                if (!other.isOpen) continue;
+                //slice the clip path into 2 convex polygons,
+                //then check to see which is the one we want.
+                var dx = (other.x - current.x)/2;
+                var dy = (other.y - current.y)/2;
+                //reduce the distance by GAP_WIDTH/2;
+                var len = Math.sqrt(dx*dx+dy*dy);
+                var newlen = len - GAP_WIDTH/2;
+                dx *= newlen/len;
+                dy *= newlen/len;
+
+                var cut1 = {
+                    x: SVG_SIZE/2 + dx,
+                    y: SVG_SIZE/2 + dy
+                }
+                var cut2 = {
+                    x: SVG_SIZE/2 + dx+dy,
+                    y: SVG_SIZE/2 + dy-dx
+                }
+                var intersections = [];
+                for (var k = 0; k < points.length; k++) {
+                    var p1 = points[k];
+                    var p2 = points[(k+1)%points.length];
+                    //intersection finder:
+                    var x1 = cut1.x, y1 = cut1.y, x2 = cut2.x, y2 = cut2.y,
+                        x3 = p1.x, y3 = p1.y, x4 = p2.x, y4 = p2.y;
+                    var intersection = {
+                        x: ( (x1*y2-y1*x2)*(x3-x4)-(x1-x2)*(x3*y4-y3*x4) )/( (x1-x2)*(y3-y4)-(y1-y2)*(x3-x4) ),
+                        y: ( (x1*y2-y1*x2)*(y3-y4)-(y1-y2)*(x3*y4-y3*x4) )/( (x1-x2)*(y3-y4)-(y1-y2)*(x3-x4) )
+                    }
+                    var isYDiffGreater = Math.abs(p2.y-p1.y) > Math.abs(p2.x-p1.x);
+                    if (	(!isYDiffGreater && (intersection.x < p1.x ^ intersection.x < p2.x) )
+                        ||	( isYDiffGreater && (intersection.y < p1.y ^ intersection.y < p2.y) ) ) {
+                        //at this line segment following point k, there is an intersection.
+                        intersections.push({intersection:intersection, k:k});
+                    }
+                }
+                //if there were 2 intersections, perform the cut
+                if (intersections.length === 2) {
+                    var result = [];
+                    //the intersection points
+                    var i1 = intersections[0].intersection;
+                    var i2 = intersections[1].intersection;
+                    //the indexes of the line segments that they intersected
+                    var k1 = intersections[0].k;
+                    var k2 = intersections[1].k;
+
+                    var isLeft = ((i2.x - i1.x)*(SVG_SIZE/2 - i1.y) - (i2.y - i1.y)*(SVG_SIZE/2 - i1.x)) < 0;
+                    if (isLeft) {
+                        //go from k1's line to k2's line
+                        result.push(i1);
+                        for (var k = k1+1; k <= k2; k++) {
+                            result.push(points[k]);
+                        }
+                        result.push(i2);
+                    } else {
+                        //go from k2's line to k1's line
+                        result.push(i2);
+                        for (var k = (k2+1)%points.length; k != (k1+1)%points.length; k = (k+1)%points.length) {
+                            result.push(points[k]);
+                        }
+                        result.push(i1);
+                    }
+                    points = result;
+                }
+            }
+        }
+        //now that points[] represents the clipPath we want, generate that clipPath
+        var str = 'M ' + points[0].x + ' ' + points[0].y;
+        for (var j = 1; j < points.length; j++) {
+            str += 'L ' + points[j].x + ' ' + points[j].y;
+        }
+        var path = document.createElementNS(NS, 'path');
+        path.setAttribute('d', str);
+        current.arcsClipPath.appendChild(path);
+    }
+}
 
 /**
  * helper func to get pos of element

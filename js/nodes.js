@@ -9,7 +9,6 @@ var DOT_LIST = [
 			tmp.connections = [];
 			return tmp;
 		},
-		//huehuehue
 		hue: 300,
 		parameters: [],
         options: [
@@ -105,6 +104,7 @@ var DOT_LIST = [
 					 * I changed it so the final frequency is a Math.floor
 					 */
 					return Math.pow(2,((128*percent)-69)/12)*440;
+//                    return 10000*(Math.pow(2,percent)-1);
 				},
 				invScale: function(value) {
 					/*
