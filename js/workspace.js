@@ -17,6 +17,9 @@
 			return _scale;
 		},
 		set: function(val) {
+			var ratio = val/_scale;
+			offset.pxX += ((centerX-offset.pxX)/val - (centerX-offset.pxX)/_scale)*val;
+			offset.pxY += ((centerY-offset.pxY)/val - (centerY-offset.pxY)/_scale)*val;
 			_scale = val;
 			_redraw();
 		}
