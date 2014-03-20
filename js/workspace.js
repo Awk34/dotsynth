@@ -78,8 +78,6 @@
 			if (panning) {
 				offset.pxX += e.pxDX/e.interactions;
 				offset.pxY += e.pxDY/e.interactions;
-				var centerWeight = (e.interactions-1)/e.interactions;
-				var newTouchWeight = 1/e.interactions;
 				if (e.interactions >= 2) {
 					var oldDistanceFromCenterX = e.clientX-e.pxDX-centerX;
 					var oldDistanceFromCenterY = e.clientY-e.pxDY-centerY;
@@ -92,9 +90,8 @@
 					var newDistanceFromCenterY = e.clientY-centerY;
 					var newDistanceFromCenter = Math.sqrt(Math.pow(newDistanceFromCenterX,2)+Math.pow(newDistanceFromCenterY,2));
 					var scaleFactor = (newDistanceFromCenter / oldDistanceFromCenter);
-					scaleFactor = (scaleFactor-1)*newTouchWeight+1;
+					scaleFactor = Math.pow(scaleFactor, 2/e.interactions);
 					scale *= scaleFactor;
-					help.innerHTML = scale.toFixed(3);
 				} else {
 					centerX = e.clientX;
 					centerY = e.clientY;
