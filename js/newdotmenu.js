@@ -12,9 +12,9 @@ addListeners(document, {onHoldStart: function(e) {
 		function pxToMm(val) {
 			return val / ( newDotMenu.offsetHeight / size );
 		}
-		newDotMenu.setAttributeNS(null, 'width', size + UNITS);
-		newDotMenu.setAttributeNS(null, 'height', size + UNITS);
-		newDotMenu.setAttributeNS(null, 'viewBox', '0 0 ' + size + ' ' + size);
+		newDotMenu.setAttribute('width', size + UNITS);
+		newDotMenu.setAttribute('height', size + UNITS);
+		newDotMenu.setAttribute('viewBox', '0 0 ' + size + ' ' + size);
 		//add menu items
 		for (var i = 0; i < DOT_LIST.length; i++) {
 			var angle = 3*Math.PI/2 + 2*Math.PI * i/DOT_LIST.length;
@@ -24,19 +24,19 @@ addListeners(document, {onHoldStart: function(e) {
 			
 			//label the circle
 			var name = document.createElementNS(NS, 'text');
-			name.setAttributeNS(null, 'x', cx);
-			name.setAttributeNS(null, 'y', cy);
-			name.setAttributeNS(null, 'text-anchor', 'middle');
-			name.setAttributeNS(null, 'dominant-baseline', 'middle');
-			name.setAttributeNS(null, 'font-size', DOT_NAME_SIZE);
-			name.setAttributeNS(null, 'fill', 'black');
+			name.setAttribute('x', cx);
+			name.setAttribute('y', cy);
+			name.setAttribute('text-anchor', 'middle');
+			name.setAttribute('dominant-baseline', 'middle');
+			name.setAttribute('font-size', DOT_NAME_SIZE);
+			name.setAttribute('fill', 'black');
 			name.innerHTML = DOT_LIST[i].shortName;
 			
 			//create the circle
-			circle.setAttributeNS(null, 'cx', cx);
-			circle.setAttributeNS(null, 'cy', cy);
-			circle.setAttributeNS(null, 'r', DOT_RADIUS);
-			circle.setAttributeNS(null, 'fill', 'hsla(' + DOT_LIST[i].hue + ', 100%, ' + DOT_LIGHTNESS + ', 1)');
+			circle.setAttribute('cx', cx);
+			circle.setAttribute('cy', cy);
+			circle.setAttribute('r', DOT_RADIUS);
+			circle.setAttribute('fill', 'hsla(' + DOT_LIST[i].hue + ', 100%, ' + DOT_LIGHTNESS + ', 1)');
 			circle.dotDefinition = DOT_LIST[i];
 			addListeners(circle, {onTapStart: function(e) {
 				newDot = new Dot(e.element.dotDefinition, e.mmX, e.mmY);
