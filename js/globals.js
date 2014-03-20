@@ -38,3 +38,4 @@ var CONTINUOUS_PHYSICS = false;
 var nodeArray = [];
 
 var DOT_CONTAINER = document.getElementById('workspace');
+var DOT_CONTAINER_WRAPPER = document.getElementById('workspaceWrapper');

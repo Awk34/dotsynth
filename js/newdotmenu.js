@@ -1,4 +1,4 @@
-addListeners(DOT_CONTAINER, {onHoldStart: function(e) {
+dotMenuEvent = function(e) {
 	var self = this;
 	this.isVisible = false;
 	if (this.newDotMenu == undefined) {
@@ -43,7 +43,7 @@ addListeners(DOT_CONTAINER, {onHoldStart: function(e) {
 				nodeArray.push(newDot);
 				self.isVisible = false;
 				newDotMenu.classList.add('hidden');
-			}});
+			}}, true);
 			newDotMenu.appendChild(circle);
 			newDotMenu.appendChild(name);
 		}
@@ -56,10 +56,10 @@ addListeners(DOT_CONTAINER, {onHoldStart: function(e) {
 		this.isVisible = true;
 		newDotMenu.classList.remove('hidden');
 		//TODO: make it show properly!
-		newDotMenu.style.left = e.pxX +DOT_CONTAINER.scrollLeft - newDotMenu.offsetWidth/2 + "px";
-		newDotMenu.style.top = e.pxY +DOT_CONTAINER.scrollTop - newDotMenu.offsetHeight/2 + "px";
+		newDotMenu.style.left = e.pxX - newDotMenu.offsetWidth/2 + "px";
+		newDotMenu.style.top = e.pxY - newDotMenu.offsetHeight/2 + "px";
 	}
-}});
+};
 
 /**
  * Helper function. Determines the ideal radius of a circle of dots

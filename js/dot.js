@@ -207,7 +207,7 @@ function Dot(definition, x, y) {
 	addListeners(this.centerElement, {
 		onHoldStart: function(e) {navigator.vibrate(HOLD_EFFECT_VIBRATE_TIME);},
 		onHoldDragStart: function(e) {conn = new Connection(selfDot);},
-		onHoldDragMove: function(e) {conn.endAt(e.mmX+pxToMm(DOT_CONTAINER.scrollLeft), e.mmY+pxToMm(DOT_CONTAINER.scrollTop))},
+		onHoldDragMove: function(e) {conn.endAt(e.mmX, e.mmY)},
 		onDragStart: function(e) {
 			//move to front
 			selfDot.svgElement.parentNode.appendChild(selfDot.svgElement);
@@ -219,8 +219,8 @@ function Dot(definition, x, y) {
 		onDragMove: function(e) {
 			if (CONTINUOUS_PHYSICS)
 				Physics.remove(selfDot);
-			selfDot.x = e.mmX+pxToMm(DOT_CONTAINER.scrollLeft);
-			selfDot.y = e.mmY+pxToMm(DOT_CONTAINER.scrollTop);
+			selfDot.x = e.mmX;
+			selfDot.y = e.mmY;
 			if (CONTINUOUS_PHYSICS) {
 				Physics.add(selfDot);
 				updateArcsClipPath();
@@ -239,7 +239,7 @@ function Dot(definition, x, y) {
 			conn.finalize(document.elementFromPoint(e.clientX, e.clientY))
 		},
 		onTapEnd: function(e) {selfDot.toggle();}
-	});
+	}, true);
 	
 	function Arc(parent, start, end, definition) {
 		var selfArc = this;
@@ -418,10 +418,10 @@ function Dot(definition, x, y) {
 		
 		//arc events
 		addListeners(this.pathElement, {
-			onTapStart: function(e) {modifyValue(e.pxX + DOT_CONTAINER.scrollLeft, e.pxY + DOT_CONTAINER.scrollTop);},
-			onDragMove: function(e) {modifyValue(e.pxX + DOT_CONTAINER.scrollLeft, e.pxY + DOT_CONTAINER.scrollTop);},
-			onTapEnd:   function(e) {modifyValue(e.pxX + DOT_CONTAINER.scrollLeft, e.pxY + DOT_CONTAINER.scrollTop);}
-		});
+			onTapStart: function(e) {modifyValue(e.pxX, e.pxY);},
+			onDragMove: function(e) {modifyValue(e.pxX, e.pxY);},
+			onTapEnd:   function(e) {modifyValue(e.pxX, e.pxY);}
+		}, true);
 	}
 	Physics.add(this);
 	function updateArcsClipPath() {

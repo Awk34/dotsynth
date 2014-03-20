@@ -22,7 +22,10 @@
  * 		onDragEnd       A callback function for when the the interactions ends as a drag (not a hold-drag)
  * 		onHoldDragEnd   A callback function for when the the interactions ends as a hold-drag
  */
-function addListeners(element, listeners) {
+function addListeners(element, listeners, includeOffset, maxInteractions) {
+	if (maxInteractions === undefined) maxInteractions = 1;
+	var interactions = 0;
+
 	var onTapStart = listeners.onTapStart;
 	var onHoldStart = listeners.onHoldStart;
 	var onDragStart = listeners.onDragStart;
@@ -40,21 +43,23 @@ function addListeners(element, listeners) {
 	var self = this;
 	//keep track of when this object has focus;
 	//don't let multiple interactions happen at once.
-	var hasFocus = false;
 	var touchId = null;
 	element.addEventListener('touchstart', function(e) {
 		//only begin an interaction if there is not already one occurring.
-		if (!hasFocus) {
-			hasFocus = true;
+		if (interactions < maxInteractions) {
+			interactions++;
 			var targetTouch = e.targetTouches[0];
+			var cx = targetTouch.clientX;
+			var cy = targetTouch.clientY;
 			var returnEvent = {
 				element: element,
-				pxX: targetTouch.pageX,
-				pxY: targetTouch.pageY,
-				mmX: pxToMm(targetTouch.pageX),
-				mmY: pxToMm(targetTouch.pageY),
+				pxX: targetTouch.pageX - (includeOffset ? offset.pxX : 0),
+				pxY: targetTouch.pageY - (includeOffset ? offset.pxY : 0),
+				mmX: pxToMm(targetTouch.pageX) - (includeOffset ? offset.mmX : 0),
+				mmY: pxToMm(targetTouch.pageY) - (includeOffset ? offset.mmY : 0),
 				clientX: targetTouch.clientX,
-				clientY: targetTouch.clientY
+				clientY: targetTouch.clientY,
+				interactions: interactions
 			}
 			touchId = targetTouch.identifier;
 			var initialPos = {
@@ -75,13 +80,18 @@ function addListeners(element, listeners) {
 				if (targetTouch !== null) {
 					var returnEvent = {
 						element: element,
-						pxX: targetTouch.pageX,
-						pxY: targetTouch.pageY,
-						mmX: pxToMm(targetTouch.pageX),
-						mmY: pxToMm(targetTouch.pageY),
+						pxX: targetTouch.pageX - (includeOffset ? offset.pxX : 0),
+						pxY: targetTouch.pageY - (includeOffset ? offset.pxY : 0),
+						mmX: pxToMm(targetTouch.pageX) - (includeOffset ? offset.mmX : 0),
+						mmY: pxToMm(targetTouch.pageY) - (includeOffset ? offset.mmY : 0),
+						pxDX: targetTouch.clientX - cx,
+						pxDY: targetTouch.clientY - cy,
 						clientX: targetTouch.clientX,
-						clientY: targetTouch.clientY
+						clientY: targetTouch.clientY,
+						interactions: interactions
 					}
+					cx = targetTouch.clientX;
+					cy = targetTouch.clientY;
 					if (!drag) {
 						//test for dragging
 						var dx = pxToMm(targetTouch.pageX - initialPos.x);
@@ -116,17 +126,20 @@ function addListeners(element, listeners) {
 			function onTouchEnd(e) {
 				var targetTouch = findTouch(touchId, e.changedTouches);
 				if (targetTouch !== null) {
+					interactions--;
 					var returnEvent = {
 						element: element,
-						pxX: targetTouch.pageX,
-						pxY: targetTouch.pageY,
-						mmX: pxToMm(targetTouch.pageX),
-						mmY: pxToMm(targetTouch.pageY),
+						pxX: targetTouch.pageX - (includeOffset ? offset.pxX : 0),
+						pxY: targetTouch.pageY - (includeOffset ? offset.pxY : 0),
+						mmX: pxToMm(targetTouch.pageX) - (includeOffset ? offset.mmX : 0),
+						mmY: pxToMm(targetTouch.pageY) - (includeOffset ? offset.mmY : 0),
+						pxDX: targetTouch.clientX - cx,
+						pxDY: targetTouch.clientY - cy,
 						clientX: targetTouch.clientX,
-						clientY: targetTouch.clientY
+						clientY: targetTouch.clientY,
+						interactions: interactions
 					}
 					touchId = null;
-					hasFocus = false;
 					clearTimeout(touchTime);
 					if (drag) {
 						//drag
@@ -166,17 +179,20 @@ function addListeners(element, listeners) {
 		//only begin an interaction if there is not already one occurring.
 		var left = e.button == 0;
 		var right = e.button == 2;
-		if (!hasFocus && (left ^ right) && !self.mouseIsDown) {
+		if (interactions < maxInteractions && (left ^ right) && !self.mouseIsDown) {
+			interactions++;
+			var cx = e.clientX;
+			var cy = e.clientY;
 			var returnEvent = {
 				element: element,
-				pxX: e.pageX,
-				pxY: e.pageY,
-				mmX: pxToMm(e.pageX),
-				mmY: pxToMm(e.pageY),
+				pxX: e.pageX - (includeOffset ? offset.pxX : 0),
+				pxY: e.pageY - (includeOffset ? offset.pxY : 0),
+				mmX: pxToMm(e.pageX) - (includeOffset ? offset.mmX : 0),
+				mmY: pxToMm(e.pageY) - (includeOffset ? offset.mmY : 0),
 				clientX: e.clientX,
-				clientY: e.clientY
+				clientY: e.clientY,
+				interactions: interactions
 			}
-			hasFocus = true;
 			self.mouseIsDown = true;
 			var initialPos = {
 				x:e.pageX,
@@ -193,13 +209,18 @@ function addListeners(element, listeners) {
 			function onMouseMove(e) {
 				var returnEvent = {
 					element: element,
-					pxX: e.pageX,
-					pxY: e.pageY,
-					mmX: pxToMm(e.pageX),
-					mmY: pxToMm(e.pageY),
+					pxX: e.pageX - (includeOffset ? offset.pxX : 0),
+					pxY: e.pageY - (includeOffset ? offset.pxY : 0),
+					mmX: pxToMm(e.pageX) - (includeOffset ? offset.mmX : 0),
+					mmY: pxToMm(e.pageY) - (includeOffset ? offset.mmY : 0),
+					pxDX: e.clientX - cx,
+					pxDY: e.clientY - cy,
 					clientX: e.clientX,
-					clientY: e.clientY
+					clientY: e.clientY,
+					interactions: interactions
 				}
+				cx = e.clientX;
+				cy = e.clientY;
 				if (!drag) {
 					//test for dragging
 					var dx = pxToMm(e.pageX - initialPos.x);
@@ -230,16 +251,19 @@ function addListeners(element, listeners) {
 				e.preventDefault();
 			}
 			function onMouseUp(e) {
+				interactions--;
 				var returnEvent = {
 					element: element,
-					pxX: e.pageX,
-					pxY: e.pageY,
-					mmX: pxToMm(e.pageX),
-					mmY: pxToMm(e.pageY),
+					pxX: e.pageX - (includeOffset ? offset.pxX : 0),
+					pxY: e.pageY - (includeOffset ? offset.pxY : 0),
+					mmX: pxToMm(e.pageX) - (includeOffset ? offset.mmX : 0),
+					mmY: pxToMm(e.pageY) - (includeOffset ? offset.mmY : 0),
+					pxDX: e.clientX - cx,
+					pxDY: e.clientY - cy,
 					clientX: e.clientX,
-					clientY: e.clientY
+					clientY: e.clientY,
+					interactions: interactions
 				}
-				hasFocus = false;
 				self.mouseIsDown = false;
 				clearTimeout(touchTime);
 				if (drag) {
