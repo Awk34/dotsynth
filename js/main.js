@@ -40,7 +40,6 @@ function undo() {
             del(thisAction.context);
             break;
         case "delete":
-            //TODO: redraw dot-squishing
             //replace dot
             var tmpDot = new Dot(thisAction.context.definition, thisAction.context.x, thisAction.context.y);
             undoStack.pop();
@@ -51,27 +50,28 @@ function undo() {
             //reconnect connections
             var length = thisAction.context.connections.length;
             for(var i=0; i < length; i++) {
-                undoStack.pop();
                 //TODO
                 //if this dot is the output for this connection
                 if(thisAction.context.connections[i].thisSource == thisAction.context) {
                     var tmpConn = new Connection(tmpDot);
+                    undoStack.pop();
                     tmpConn.finalize(thisAction.context.connections[i].thisDest.centerElement);
                 }
                 //else, this dot is the input for this connection
                 else if(thisAction.context.connections[i].thisDest == thisAction.context) {
                     var tmpConn = new Connection(thisAction.context.connections[i].thisSource);
+                    undoStack.pop();
                     tmpConn.finalize(tmpDot.centerElement);
                 } else {console.log("uh oh")}
             }
             redoStack.push(thisAction);
             break;
         case "connect":
-            //TODO: disconnect nodes
             redoStack.push(thisAction);
             del(thisAction.context);
             break;
         case "disconnect": //connections
+            redoStack.push(thisAction);
             //TODO
             break;
         default:
@@ -99,10 +99,13 @@ function redo() {
             break;
         case "delete":
             undoStack.push(thisAction);
-            del(thisAction.context);
+            del(dotList[dotList.length-1]);
             break;
         case "connect":
-            //TODO
+            undoStack.push(thisAction);
+            var tmpConn = new Connection(thisAction.context.thisSource);
+            undoStack.pop();
+            tmpConn.finalize(thisAction.context.thisDest.centerElement);
             break;
         case "disconnect": //connections
             undoStack.push(thisAction);
@@ -114,7 +117,6 @@ function redo() {
     }
 }
 
-//TODO: universal delete method
 function del(obj) {
     if(obj instanceof Dot) {
         dotList.splice(dotList.indexOf(obj), 1);
@@ -134,8 +136,8 @@ function del(obj) {
         Physics.remove(obj);
         updateArcsClipPath();
     } else if(obj instanceof Connection) {
-        //TODO: is this correct?
         obj.svgElement.remove();
+        obj.thisSource.node.disconnect(obj.thisDest.node);
         obj.thisSource.connections.splice(obj.thisSource.connections.indexOf(obj), 1);
         obj.thisDest.connections.splice(obj.thisDest.connections.indexOf(obj), 1);
     } else if(obj instanceof undefined) {
