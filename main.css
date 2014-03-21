@@ -4,27 +4,15 @@ body {
     margin: 0;
     background-color: black;
 }
+a {
+    text-decoration: none;
+}
 body p {
     position: absolute;
     color: gray;
     font-size: 5em;
     margin-top: 0;
 }
-#help {
-    position: absolute;
-    right: 2%;
-    color: #006;
-}
-#logo {
-    width: 33mm;
-    position: absolute;
-    margin: 0 0 0 0;
-}
-/*.oscTypeMenu {
-	position: absolute;
-	right: 2%;
-	color: #006;
-}*/
 .popup {
     position: absolute;
     left: 5%;
@@ -99,4 +87,99 @@ text {
 	text-anchor: middle;
 	dominant-baseline: middle;
 	fill: black;
+}
+
+/*  MENU CSS  */
+
+#hamburger {
+    position: absolute;
+    left: 0;
+    margin: 3mm;
+}
+
+.menu {
+    background: #777;
+    position: fixed;
+    /* Might bring width out to make right menu a bit bigger */
+    width: 240px;
+    height: 100%;
+    top: 0;
+    z-index: 1000;
+}
+
+.menu h3 {
+    color: white;
+    font-size: 1.9em;
+    padding: 20px;
+    margin: 0;
+    font-weight: 300;
+    background: #272727;
+}
+
+.menu div {
+    color: white;
+    padding: 0;
+    margin: 0;
+    background: #272727;
+}
+
+.menu div #logo {
+    padding: 0;
+    width: 125px;
+    margin: 0 auto 0 auto;
+}
+
+.menu a {
+    display: block;
+    color: #fff;
+    font-size: 1.1em;
+    font-weight: 300;
+    border-bottom: 1px solid #272727;
+    padding: 1em;
+}
+
+.menu a:hover {
+    background: #8a8a8a;
+}
+
+.menu a:active {
+    background: #bfbfbf;
+    color: #000000;
+}
+
+.menu-left {
+    left: -240px;
+}
+
+.menu-right {
+    right: -240px;
+}
+
+.menu-left.menu-open {
+    left: 0;
+}
+
+.menu-right.menu-open {
+    right: 0;
+}
+
+/* push classes applied to body */
+
+.menu-push {
+    overflow-x: hidden;
+    position: relative;
+    left: 0;
+}
+
+.menu-push-toright {
+    left: 240px;
+}
+
+/* Transitions */
+
+.menu,
+.menu-push {
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    transition: all 0.3s ease;
 }

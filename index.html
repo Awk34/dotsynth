@@ -13,11 +13,43 @@
 		<script src="js/physics.js" defer></script>
 		<script src="js/style.js" defer></script>
 		<script src="js/main.js" defer></script>
+		<script src="js/menus.js" defer></script>
+		<script src="js/vendor/classie.js" defer></script>
+		<script src="js/vendor/modernizr.custom.48635.js" defer></script>
 		<meta name="viewport" content="width=device-width, user-scalable=yes">
 	</head>
-	<body>
-		<img src="dotsynth_logo_white.png" id="logo">
-		<p id="help">?</p>
+	<body class="menu-push">
+        <div>
+            <!-- TODO: replace with SVG -->
+            <button id="showLeftPush">Hamburger</button>
+        </div>
+        <div>
+            <!-- TODO: replace with SVG -->
+            <button id="showRight">New Node</button>
+        </div>
+
+        <!-- MENU STUFF -->
+		<nav class="menu menu-left" id="leftMenu">
+			<div><img src="dotsynth_logo_white.png" id="logo"></div>
+			<a href="#">New</a>
+			<a href="#">Open</a>
+			<a href="#">Blah</a>
+			<a href="#">Blah</a>
+			<a href="#" id="help">Help</a>
+			<a href="#">About</a>
+		</nav>
+		<nav class="menu menu-right" id="rightMenu">
+			<h3>New Node</h3>
+			<!-- TODO: dynamically load -->
+            <div id="new-dot-container"></div>
+			<a href="#">Oscillator</a>
+			<a href="#">Output</a>
+			<a href="#">LFO</a>
+			<a href="#">Other</a>
+			<a href="#">Other</a>
+		</nav>
+		<!-- MENU STUFF -->
+
 		<div id="helptext" class="popup hidden">
 			<div style="text-decoration: underline">Instructions</div><br>
 			Create Nodes:<br>
@@ -28,13 +60,13 @@
 			Manipulate Nodes:<br>
 			<ul>
 				<li>Drag nodes across the screen to move them</li>
-				<li>Tap nodes to bring up their parameters</li>
-					<ul><li>Tap/Drag parameters to change them</li></ul>
+				<li>Tap nodes to bring up their parameters
+					<ul><li>Tap/Drag parameters to change them</li></ul></li>
 			</ul>
 			Link Nodes:<br>
 			<ul>
-				<li>Long-press and then drag from one node to another node to create a connection</li>
-					<ul><li>Start at output, drag to input</li></ul>
+				<li>Long-press and then drag from one node to another node to create a connection
+					<ul><li>Start at output, drag to input</li></ul></li>
 			</ul>
 		</div>
 	</body>
