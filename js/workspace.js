@@ -24,8 +24,6 @@
 			_redraw();
 		}
 	});
-	var centerX = 0;
-	var centerY = 0;
 	function _redraw() {
 		DOT_CONTAINER.style[transformProperty] = "translate(" + _x + "px," + _y + "px) scale(" + _scale + ")";
 	}
@@ -65,12 +63,74 @@
 			_redraw();
 		}
 	});
+	var centerX = 0;
+	var centerY = 0;
+	var avgDist = 0;
+	var pointerList = [];
+	pointerList.remove = function(e) {
+		var id = e.identifier;
+		var e;
+		for (var i = 0; i < this.length; i++) {
+			if (this[i].identifier == id) {
+				e = this.splice(i,1)[0];
+				break;
+			}
+		}
+		var centerWeight = (e.interactions-1)/e.interactions;
+		var newTouchWeight = 1/e.interactions;
+		centerX = centerWeight*centerX + newTouchWeight*e.clientX;
+		centerY = centerWeight*centerY + newTouchWeight*e.clientY;
+		avgDist = this.findAverageDistance();
+	}
+	pointerList.add = function(e) {
+		this.push(e);
+		var centerWeight = (e.interactions-1)/e.interactions;
+		var newTouchWeight = 1/e.interactions;
+		centerX = centerWeight*centerX + newTouchWeight*e.clientX;
+		centerY = centerWeight*centerY + newTouchWeight*e.clientY;
+		avgDist = this.findAverageDistance();
+	}
+	pointerList.update = function(e) {
+		for (var i = 0; i < this.length; i++) {
+			if (this[i].identifier == e.identifier) {
+				this[i] = e;
+				break;
+			}
+		}
+		if (panning) {
+			offset.pxX += e.pxDX/e.interactions;
+			offset.pxY += e.pxDY/e.interactions;
+		}
+		var centerWeight = (e.interactions-1)/e.interactions;
+		var newTouchWeight = 1/e.interactions;
+		centerX += newTouchWeight*e.pxDX;
+		centerY += newTouchWeight*e.pxDY;
+		if (e.interactions >= 2) {
+			var newAvgDist = pointerList.findAverageDistance();
+			scale *= newAvgDist/avgDist;
+			avgDist = newAvgDist;
+		} else {
+			centerX = e.clientX;
+			centerY = e.clientY;
+		}
+	}
+	pointerList.findAverageDistance = function() {
+		var avgDist = 0;
+		for (var i = 0; i < this.length; i++) {
+			var e = this[i];
+			avgDist += Math.sqrt(Math.pow(e.clientX-centerX,2) + Math.pow(e.clientY-centerY,2));
+		}
+		return avgDist/this.length;
+	}
+	function onEnd(e) {
+		pointerList.remove(e);
+		if (e.interactions == 0) {
+			panning = false;
+		}
+	}
 	addListeners(DOT_CONTAINER_WRAPPER, {
 		onTapStart: function(e) {
-			var centerWeight = (e.interactions-1)/e.interactions;
-			var newTouchWeight = 1/e.interactions;
-			centerX = centerWeight*centerX + newTouchWeight*e.clientX;
-			centerY = centerWeight*centerY + newTouchWeight*e.clientY;
+			pointerList.add(e);
 		},
 		onDragStart: function(e) {
 			if (e.interactions >= 1) {
@@ -78,47 +138,20 @@
 			}
 		},
 		onDragMove: function(e) {
-			if (panning) {
-				offset.pxX += e.pxDX/e.interactions;
-				offset.pxY += e.pxDY/e.interactions;
-				if (e.interactions >= 2) {
-					var oldDistanceFromCenterX = e.clientX-e.pxDX-centerX;
-					var oldDistanceFromCenterY = e.clientY-e.pxDY-centerY;
-					var oldDistanceFromCenter = Math.sqrt(Math.pow(oldDistanceFromCenterX,2)+Math.pow(oldDistanceFromCenterY,2));
-					var centerWeight = (e.interactions-1)/e.interactions;
-					var newTouchWeight = 1/e.interactions;
-					centerX += newTouchWeight*e.pxDX;
-					centerY += newTouchWeight*e.pxDY;
-					var newDistanceFromCenterX = e.clientX-centerX;
-					var newDistanceFromCenterY = e.clientY-centerY;
-					var newDistanceFromCenter = Math.sqrt(Math.pow(newDistanceFromCenterX,2)+Math.pow(newDistanceFromCenterY,2));
-					var scaleFactor = (newDistanceFromCenter / oldDistanceFromCenter);
-					scaleFactor = Math.pow(scaleFactor, 2/e.interactions);
-					scale *= scaleFactor;
-				} else {
-					centerX = e.clientX;
-					centerY = e.clientY;
-				}
-			}
+			pointerList.update(e);
 		},
 		onHoldStart: function(e) {
 			if (!panning && e.interactions == 1)
 				dotMenuEvent(e);
 		},
 		onTapEnd: function(e) {
-			if (e.interactions == 0) {
-				panning = false;
-			}
+			onEnd(e);
 		},
 		onHoldEnd: function(e) {
-			if (e.interactions == 0) {
-				panning = false;
-			}
+			onEnd(e);
 		},
 		onDragEnd: function(e) {
-			if (e.interactions == 0) {
-				panning = false;
-			}
+			onEnd(e);
 		}
 	}, true, 10);
 })()

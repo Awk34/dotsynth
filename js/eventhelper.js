@@ -61,7 +61,8 @@ function addListeners(element, listeners, includeOffset, maxInteractions) {
 					mmY: pxToMm(targetTouch.pageY / (includeOffset ? scale : 1)) - (includeOffset ? offset.mmY / scale : 0),
 					clientX: targetTouch.clientX,
 					clientY: targetTouch.clientY,
-					interactions: interactions
+					interactions: interactions,
+					identifier: targetTouch.identifier
 				}
 				var touchId = targetTouch.identifier;
 				var initialPos = {
@@ -90,7 +91,8 @@ function addListeners(element, listeners, includeOffset, maxInteractions) {
 							pxDY: targetTouch.clientY - cy,
 							clientX: targetTouch.clientX,
 							clientY: targetTouch.clientY,
-							interactions: interactions
+							interactions: interactions,
+							identifier: targetTouch.identifier
 						}
 						cx = targetTouch.clientX;
 						cy = targetTouch.clientY;
@@ -139,7 +141,8 @@ function addListeners(element, listeners, includeOffset, maxInteractions) {
 							pxDY: targetTouch.clientY - cy,
 							clientX: targetTouch.clientX,
 							clientY: targetTouch.clientY,
-							interactions: interactions
+							interactions: interactions,
+							identifier: targetTouch.identifier
 						}
 						touchId = null;
 						clearTimeout(touchTime);
@@ -194,7 +197,8 @@ function addListeners(element, listeners, includeOffset, maxInteractions) {
 				mmY: pxToMm(e.pageY / (includeOffset ? scale : 1)) - (includeOffset ? offset.mmY / scale : 0),
 				clientX: e.clientX,
 				clientY: e.clientY,
-				interactions: interactions
+				interactions: interactions,
+				identifier: "cursor"
 			}
 			self.mouseIsDown = true;
 			var initialPos = {
@@ -220,7 +224,8 @@ function addListeners(element, listeners, includeOffset, maxInteractions) {
 					pxDY: e.clientY - cy,
 					clientX: e.clientX,
 					clientY: e.clientY,
-					interactions: interactions
+					interactions: interactions,
+					identifier: "cursor"
 				}
 				cx = e.clientX;
 				cy = e.clientY;
@@ -265,7 +270,8 @@ function addListeners(element, listeners, includeOffset, maxInteractions) {
 					pxDY: e.clientY - cy,
 					clientX: e.clientX,
 					clientY: e.clientY,
-					interactions: interactions
+					interactions: interactions,
+					identifier: "cursor"
 				}
 				self.mouseIsDown = false;
 				clearTimeout(touchTime);
