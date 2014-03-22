@@ -7,21 +7,21 @@ var menuLeft = document.getElementById( 'leftMenu' ),
     body = document.body;
 
 showRight.onclick = function() {
-    // if(class.has(menuRight, 'menu-open')) {
-    // 	disableOther( 'menuRight' );
-    // }
+    if(!classie.has(menuRight, 'menu-open')) {
+    	closeOther( 'menuRight' );
+    }
     classie.toggle( menuRight, 'menu-open' );
 };
 showLeftPush.onclick = function() {
-    // if(class.has(this, 'active')) {
-    // 	disableOther( 'menuLeftPush' );
-    // }
+    if(!classie.has(menuLeft, 'menu-open')) {
+    	closeOther( 'menuLeftPush' );
+    }
     classie.toggle( body, 'menu-push-toright' );
     classie.toggle( menuLeft, 'menu-open' );
 };
 
 //not working
-function disableOther( menu ) {
+function closeOther( menu ) {
     if( menu !== 'menuRight' ) {
         classie.remove( menuRight, 'menu-open' );
     }

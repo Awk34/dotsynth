@@ -98,7 +98,7 @@ text {
 }
 
 .menu {
-    background: #777;
+    background: #272727;
     position: fixed;
     /* Might bring width out to make right menu a bit bigger */
     width: 240px;
@@ -130,6 +130,7 @@ text {
 }
 
 .menu a {
+    background: #777;
     display: block;
     color: #fff;
     font-size: 1.1em;
@@ -137,11 +138,9 @@ text {
     border-bottom: 1px solid #272727;
     padding: 1em;
 }
-
 .menu a:hover {
     background: #8a8a8a;
 }
-
 .menu a:active {
     background: #bfbfbf;
     color: #000000;
@@ -163,7 +162,7 @@ text {
     right: 0;
 }
 
-/* push classes applied to body */
+/* added to body for moving */
 
 .menu-push {
     overflow-x: hidden;
