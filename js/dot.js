@@ -5,7 +5,7 @@ var dotList = [];
 function Dot(definition, x, y) {
 	dotList.push(this);
 	var selfDot = this;
-	var parent = this.parentElement = document.body;
+	var parent = this.parentElement = DOT_CONTAINER;
 	this.definition = definition;
     this.definition.parent = selfDot;
 	this.connections = [];
@@ -258,7 +258,7 @@ function Dot(definition, x, y) {
 			conn.finalize(document.elementFromPoint(e.clientX, e.clientY))
 		};
 	}
-	addListeners(this.centerElement, callbackListeners);
+	addListeners(this.centerElement, callbackListeners, true);
 	
 	function Arc(parent, start, end, definition) {
 		var selfArc = this;
@@ -440,7 +440,7 @@ function Dot(definition, x, y) {
 			onTapStart: function(e) {modifyValue(e.pxX, e.pxY);},
 			onDragMove: function(e) {modifyValue(e.pxX, e.pxY);},
 			onTapEnd:   function(e) {modifyValue(e.pxX, e.pxY);}
-		});
+		}, true);
 	}
 	Physics.add(this);
 	function updateArcsClipPath() {

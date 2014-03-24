@@ -22,7 +22,10 @@
  * 		onDragEnd       A callback function for when the the interactions ends as a drag (not a hold-drag)
  * 		onHoldDragEnd   A callback function for when the the interactions ends as a hold-drag
  */
-function addListeners(element, listeners) {
+function addListeners(element, listeners, includeOffset, maxInteractions) {
+	if (maxInteractions === undefined) maxInteractions = 1;
+	var interactions = 0;
+
 	var onTapStart = listeners.onTapStart;
 	var onHoldStart = listeners.onHoldStart;
 	var onDragStart = listeners.onDragStart;
@@ -33,123 +36,146 @@ function addListeners(element, listeners) {
 	var onHoldEnd = listeners.onHoldEnd;
 	var onDragEnd = listeners.onDragEnd;
 	var onHoldDragEnd = listeners.onHoldDragEnd;
+	
+	var allowScroll = !(onDragStart || onDragMove || onDragEnd)
+			&& !(onTapStart || onTapEnd);
+	
 	var self = this;
 	//keep track of when this object has focus;
 	//don't let multiple interactions happen at once.
-	var hasFocus = false;
-	var touchId = null;
 	element.addEventListener('touchstart', function(e) {
 		//only begin an interaction if there is not already one occurring.
-		if (!hasFocus) {
-			hasFocus = true;
-			var targetTouch = e.targetTouches[0];
-			var returnEvent = {
-				element: element,
-				pxX: targetTouch.pageX,
-				pxY: targetTouch.pageY,
-				mmX: pxToMm(targetTouch.pageX),
-				mmY: pxToMm(targetTouch.pageY),
-				clientX: targetTouch.clientX,
-				clientY: targetTouch.clientY
-			}
-			touchId = targetTouch.identifier;
-			var initialPos = {
-				x:targetTouch.pageX,
-				y:targetTouch.pageY
-			}
-			if (onTapStart) onTapStart(returnEvent);
-			var hold = false;
-			var drag = false;
-			var touchTime = setTimeout(function() {
-				//if enough time passes, hold starts
-				hold = true;
-				if (onHoldStart) onHoldStart(returnEvent);
-			}, TAP_TIMEOUT);
-			function onTouchMove(e) {
-				var targetTouch = findTouch(touchId, e.changedTouches);
-				//only proceed if this event is related to the pointer we are tracking.
-				if (targetTouch !== null) {
-					var returnEvent = {
-						element: element,
-						pxX: targetTouch.pageX,
-						pxY: targetTouch.pageY,
-						mmX: pxToMm(targetTouch.pageX),
-						mmY: pxToMm(targetTouch.pageY),
-						clientX: targetTouch.clientX,
-						clientY: targetTouch.clientY
-					}
-					if (!drag) {
-						//test for dragging
-						var dx = pxToMm(targetTouch.pageX - initialPos.x);
-						var dy = pxToMm(targetTouch.pageY - initialPos.y);
-						
-						//check if exited dragbox
-						if ( Math.abs(dy) > DRAG_BOX_SIZE/2 || Math.abs(dx) > DRAG_BOX_SIZE/2 ) {
-							drag = true;
-							clearTimeout(touchTime);
-							//begin drag effects
+		for ( var i = 0; i < e.changedTouches.length; i++ ) {
+			eachTouch(e, e.changedTouches[i]);
+		}
+		function eachTouch(e, targetTouch) {
+			if (interactions < maxInteractions) {
+				interactions++;
+				var cx = targetTouch.clientX;
+				var cy = targetTouch.clientY;
+				var returnEvent = {
+					element: element,
+					pxX: targetTouch.pageX / (includeOffset ? scale : 1) - (includeOffset ? offset.pxX / scale : 0),
+					pxY: targetTouch.pageY / (includeOffset ? scale : 1) - (includeOffset ? offset.pxY / scale : 0),
+					mmX: pxToMm(targetTouch.pageX / (includeOffset ? scale : 1)) - (includeOffset ? offset.mmX / scale : 0),
+					mmY: pxToMm(targetTouch.pageY / (includeOffset ? scale : 1)) - (includeOffset ? offset.mmY / scale : 0),
+					clientX: targetTouch.clientX,
+					clientY: targetTouch.clientY,
+					interactions: interactions,
+					identifier: targetTouch.identifier
+				}
+				var touchId = targetTouch.identifier;
+				var initialPos = {
+					x:targetTouch.pageX,
+					y:targetTouch.pageY
+				}
+				if (onTapStart) onTapStart(returnEvent);
+				var hold = false;
+				var drag = false;
+				var touchTime = setTimeout(function() {
+					//if enough time passes, hold starts
+					hold = true;
+					if (onHoldStart) onHoldStart(returnEvent);
+				}, TAP_TIMEOUT);
+				function onTouchMove(e) {
+					var targetTouch = findTouch(touchId, e.changedTouches);
+					//only proceed if this event is related to the pointer we are tracking.
+					if (targetTouch !== null) {
+						var returnEvent = {
+							element: element,
+							pxX: targetTouch.pageX / (includeOffset ? scale : 1) - (includeOffset ? offset.pxX / scale : 0),
+							pxY: targetTouch.pageY / (includeOffset ? scale : 1) - (includeOffset ? offset.pxY / scale : 0),
+							mmX: pxToMm(targetTouch.pageX / (includeOffset ? scale : 1)) - (includeOffset ? offset.mmX / scale : 0),
+							mmY: pxToMm(targetTouch.pageY / (includeOffset ? scale : 1)) - (includeOffset ? offset.mmY / scale : 0),
+							pxDX: targetTouch.clientX - cx,
+							pxDY: targetTouch.clientY - cy,
+							clientX: targetTouch.clientX,
+							clientY: targetTouch.clientY,
+							interactions: interactions,
+							identifier: targetTouch.identifier
+						}
+						cx = targetTouch.clientX;
+						cy = targetTouch.clientY;
+						if (!drag) {
+							//test for dragging
+							var dx = pxToMm(targetTouch.pageX - initialPos.x);
+							var dy = pxToMm(targetTouch.pageY - initialPos.y);
+							
+							//check if exited dragbox
+							if ( Math.abs(dy) > DRAG_BOX_SIZE/2 || Math.abs(dx) > DRAG_BOX_SIZE/2 ) {
+								drag = true;
+								clearTimeout(touchTime);
+								//begin drag effects
+								if (hold) {
+									//begin hold drag
+									if (onHoldDragStart) onHoldDragStart(returnEvent);
+								} else {
+									//begin normal drag
+									if (onDragStart) onDragStart(returnEvent);
+								}
+							}
+						} else {
+							//drag
 							if (hold) {
-								//begin hold drag
-								if (onHoldDragStart) onHoldDragStart(returnEvent);
+								if (onHoldDragMove) onHoldDragMove(returnEvent);
+								else if (onDragMove) onDragMove(returnEvent);
 							} else {
-								//begin normal drag
-								if (onDragStart) onDragStart(returnEvent);
+								if (onDragMove) onDragMove(returnEvent);
 							}
 						}
-					} else {
-						//drag
-						if (hold) {
-							if (onHoldDragMove) onHoldDragMove(returnEvent);
-							else if (onDragMove) onDragMove(returnEvent);
-						} else {
-							if (onDragMove) onDragMove(returnEvent);
-						}
+						if (hold || !allowScroll)
+							e.preventDefault();
 					}
-					e.preventDefault();
 				}
-			}
-			function onTouchEnd(e) {
-				var targetTouch = findTouch(touchId, e.changedTouches);
-				if (targetTouch !== null) {
-					var returnEvent = {
-						element: element,
-						pxX: targetTouch.pageX,
-						pxY: targetTouch.pageY,
-						mmX: pxToMm(targetTouch.pageX),
-						mmY: pxToMm(targetTouch.pageY),
-						clientX: targetTouch.clientX,
-						clientY: targetTouch.clientY
-					}
-					touchId = null;
-					hasFocus = false;
-					clearTimeout(touchTime);
-					if (drag) {
-						//drag
-						if (hold) {
-							if (onHoldDragEnd) onHoldDragEnd(returnEvent);
-							else if (onDragEnd) onDragEnd(returnEvent);
-						} else {
-							if (onDragEnd) onDragEnd(returnEvent);
+				function onTouchEnd(e) {
+					var targetTouch = findTouch(touchId, e.changedTouches);
+					if (targetTouch !== null) {
+						interactions--;
+						var returnEvent = {
+							element: element,
+							pxX: targetTouch.pageX / (includeOffset ? scale : 1) - (includeOffset ? offset.pxX / scale : 0),
+							pxY: targetTouch.pageY / (includeOffset ? scale : 1) - (includeOffset ? offset.pxY / scale : 0),
+							mmX: pxToMm(targetTouch.pageX / (includeOffset ? scale : 1)) - (includeOffset ? offset.mmX / scale : 0),
+							mmY: pxToMm(targetTouch.pageY / (includeOffset ? scale : 1)) - (includeOffset ? offset.mmY / scale : 0),
+							pxDX: targetTouch.clientX - cx,
+							pxDY: targetTouch.clientY - cy,
+							clientX: targetTouch.clientX,
+							clientY: targetTouch.clientY,
+							interactions: interactions,
+							identifier: targetTouch.identifier
 						}
-					} else {
-						//non-drag
-						if (hold) {
-							if (onHoldEnd) onHoldEnd(returnEvent);
-							else if (onTapEnd) onTapEnd(returnEvent);
+						touchId = null;
+						clearTimeout(touchTime);
+						if (drag) {
+							//drag
+							if (hold) {
+								if (onHoldDragEnd) onHoldDragEnd(returnEvent);
+								else if (onDragEnd) onDragEnd(returnEvent);
+							} else {
+								if (onDragEnd) onDragEnd(returnEvent);
+							}
 						} else {
-							if (onTapEnd) onTapEnd(returnEvent);
+							//non-drag
+							if (hold) {
+								if (onHoldEnd) onHoldEnd(returnEvent);
+								else if (onTapEnd) onTapEnd(returnEvent);
+							} else {
+								if (onTapEnd) onTapEnd(returnEvent);
+							}
 						}
+						document.removeEventListener('touchmove', onTouchMove);
+						document.removeEventListener('touchend', onTouchEnd);
+						if (hold || !allowScroll)
+							e.preventDefault();
 					}
-					document.removeEventListener('touchmove', onTouchMove);
-					document.removeEventListener('touchend', onTouchEnd);
-					e.preventDefault();
 				}
+				document.addEventListener('touchmove', onTouchMove);
+				document.addEventListener('touchend', onTouchEnd);
+				//only stop propagation on interaction start (indicating that this event has been 'captured');
+				e.stopPropagation();
+				if (!allowScroll)
+					e.preventDefault();
 			}
-			document.addEventListener('touchmove', onTouchMove);
-			document.addEventListener('touchend', onTouchEnd);
-			//only stop propagation on interaction start (indicating that this event has been 'captured');
-			e.stopPropagation();
-			e.preventDefault();
 		}
 	});
 	
@@ -159,17 +185,21 @@ function addListeners(element, listeners) {
 		//only begin an interaction if there is not already one occurring.
 		var left = e.button == 0;
 		var right = e.button == 2;
-		if (!hasFocus && (left ^ right) && !self.mouseIsDown) {
+		if (interactions < maxInteractions && (left ^ right) && !self.mouseIsDown) {
+			interactions++;
+			var cx = e.clientX;
+			var cy = e.clientY;
 			var returnEvent = {
 				element: element,
-				pxX: e.pageX,
-				pxY: e.pageY,
-				mmX: pxToMm(e.pageX),
-				mmY: pxToMm(e.pageY),
+				pxX: e.pageX / (includeOffset ? scale : 1) - (includeOffset ? offset.pxX / scale : 0),
+				pxY: e.pageY / (includeOffset ? scale : 1) - (includeOffset ? offset.pxY / scale : 0),
+				mmX: pxToMm(e.pageX / (includeOffset ? scale : 1)) - (includeOffset ? offset.mmX / scale : 0),
+				mmY: pxToMm(e.pageY / (includeOffset ? scale : 1)) - (includeOffset ? offset.mmY / scale : 0),
 				clientX: e.clientX,
-				clientY: e.clientY
+				clientY: e.clientY,
+				interactions: interactions,
+				identifier: "cursor"
 			}
-			hasFocus = true;
 			self.mouseIsDown = true;
 			var initialPos = {
 				x:e.pageX,
@@ -186,13 +216,19 @@ function addListeners(element, listeners) {
 			function onMouseMove(e) {
 				var returnEvent = {
 					element: element,
-					pxX: e.pageX,
-					pxY: e.pageY,
-					mmX: pxToMm(e.pageX),
-					mmY: pxToMm(e.pageY),
+					pxX: e.pageX / (includeOffset ? scale : 1) - (includeOffset ? offset.pxX / scale : 0),
+					pxY: e.pageY / (includeOffset ? scale : 1) - (includeOffset ? offset.pxY / scale : 0),
+					mmX: pxToMm(e.pageX / (includeOffset ? scale : 1)) - (includeOffset ? offset.mmX / scale : 0),
+					mmY: pxToMm(e.pageY / (includeOffset ? scale : 1)) - (includeOffset ? offset.mmY / scale : 0),
+					pxDX: e.clientX - cx,
+					pxDY: e.clientY - cy,
 					clientX: e.clientX,
-					clientY: e.clientY
+					clientY: e.clientY,
+					interactions: interactions,
+					identifier: "cursor"
 				}
+				cx = e.clientX;
+				cy = e.clientY;
 				if (!drag) {
 					//test for dragging
 					var dx = pxToMm(e.pageX - initialPos.x);
@@ -223,16 +259,20 @@ function addListeners(element, listeners) {
 				e.preventDefault();
 			}
 			function onMouseUp(e) {
+				interactions--;
 				var returnEvent = {
 					element: element,
-					pxX: e.pageX,
-					pxY: e.pageY,
-					mmX: pxToMm(e.pageX),
-					mmY: pxToMm(e.pageY),
+					pxX: e.pageX / (includeOffset ? scale : 1) - (includeOffset ? offset.pxX / scale : 0),
+					pxY: e.pageY / (includeOffset ? scale : 1) - (includeOffset ? offset.pxY / scale : 0),
+					mmX: pxToMm(e.pageX / (includeOffset ? scale : 1)) - (includeOffset ? offset.mmX / scale : 0),
+					mmY: pxToMm(e.pageY / (includeOffset ? scale : 1)) - (includeOffset ? offset.mmY / scale : 0),
+					pxDX: e.clientX - cx,
+					pxDY: e.clientY - cy,
 					clientX: e.clientX,
-					clientY: e.clientY
+					clientY: e.clientY,
+					interactions: interactions,
+					identifier: "cursor"
 				}
-				hasFocus = false;
 				self.mouseIsDown = false;
 				clearTimeout(touchTime);
 				if (drag) {
