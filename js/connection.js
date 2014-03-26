@@ -17,6 +17,11 @@ function Connection(sourceDot) {
 	this.lineElement.setAttributeNS(null, 'stroke', 'hsla(' + sourceDot.definition.hue + ', 100%, ' + CONNECTION_LIGHTNESS + ', 1)');
 	this.lineElement.setAttributeNS(null, 'fill', "none");
 	this.lineElement.setAttributeNS(null, 'stroke-width', CONNECTION_WIDTH);
+
+    this.indicatorElement = document.createElementNS(NS, 'path');
+    this.indicatorElement.setAttribute('stroke', 'hsla(' + sourceDot.definition.hue + ', 100%, ' + CONNECTION_LIGHTNESS + ', 1)');
+    this.indicatorElement.setAttribute('fill', 'hsla(' + sourceDot.definition.hue + ', 100%, ' + CONNECTION_LIGHTNESS + ', 1)');
+    this.indicatorElement.setAttribute('stroke-width', '3');
 	
 	this.svgElement.appendChild(this.lineElement);
 	parent.insertBefore(this.svgElement, parent.firstChild);

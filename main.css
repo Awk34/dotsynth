@@ -29,6 +29,12 @@ body p {
 .popup ul {
     margin: 0 0 0 0;
 }
+#copyright {
+    font-size: .65em;
+    color: #5e5e5e;
+    text-align: center;
+    margin: 5px;
+}
 svg {
     pointer-events: none;
 }
@@ -91,11 +97,11 @@ text {
 
 /*  MENU CSS  */
 
-#hamburger {
+/*#hamburger {
     position: absolute;
     left: 0;
     margin: 3mm;
-}
+}*/
 
 .menu {
     background: #272727;
@@ -129,6 +135,14 @@ text {
     margin: 0 auto 0 auto;
 }
 
+#new-dot-container {
+    background: #777;
+}
+
+#new-dot-container * {
+    margin: 1mm 1mm 1mm 1mm;
+}
+
 .menu a {
     background: #777;
     display: block;
@@ -144,6 +158,29 @@ text {
 .menu a:active {
     background: #bfbfbf;
     color: #000000;
+}
+
+#showLeft {
+    position: absolute;
+    left: 0;
+    margin: 7px 7px 7px 7px;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+#showLeft.menu-open {
+    left: 240px;
+}
+#showRight {
+    position: absolute;
+    right: 0;
+    margin: 7px 7px 7px 7px;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+#showRight.menu-open {
+    right: 240px;
 }
 
 .menu-left {

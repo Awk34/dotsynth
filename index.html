@@ -7,7 +7,7 @@
 		<script src="js/globals.js" defer></script>
 		<script src="js/eventhelper.js" defer></script>
 		<script src="js/nodes.js" defer></script>
-		<script src="js/newdotmenu.js" defer></script>
+		<!--<script src="js/newdotmenu.js" defer></script>-->
 		<script src="js/connection.js" defer></script>
 		<script src="js/dot.js" defer></script>
 		<script src="js/physics.js" defer></script>
@@ -21,7 +21,7 @@
 	<body class="menu-push">
         <div>
             <!-- TODO: replace with SVG -->
-            <button id="showLeftPush">Hamburger</button>
+            <button id="showLeft">Hamburger</button>
         </div>
         <div>
             <!-- TODO: replace with SVG -->
@@ -31,22 +31,17 @@
         <!-- MENU STUFF -->
 		<nav class="menu menu-left" id="leftMenu">
 			<div><img src="dotsynth_logo_white.png" id="logo"></div>
-			<a href="#">New</a>
+			<a href="#" onclick="javascript:">New</a>
 			<a href="#">Open</a>
 			<a href="#">Blah</a>
 			<a href="#">Blah</a>
 			<a href="#" id="help">Help</a>
 			<a href="#">About</a>
+            <div id="copyright">&copy; Copyright Andrew Koroluk and Scott Little. All rights reserved.</div>
 		</nav>
 		<nav class="menu menu-right" id="rightMenu">
 			<h3>New Node</h3>
-			<!-- TODO: dynamically load -->
             <div id="new-dot-container"></div>
-			<a href="#">Oscillator</a>
-			<a href="#">Output</a>
-			<a href="#">LFO</a>
-			<a href="#">Other</a>
-			<a href="#">Other</a>
 		</nav>
 		<!-- MENU STUFF -->
 
