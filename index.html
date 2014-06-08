@@ -19,7 +19,13 @@
 	</head>
 	<body>
 		<img src="dotsynth_logo_white.png" id="logo">
-		<p id="help">?</p>
+        <!--To be replaced by a .svg image-->
+        <div id="menu-right">
+            <!--<img src="images/eraser.svg" id="eraserbutton" />-->
+            <img src="images/undo.svg" id="undobutton" />
+            <img src="images/redo.svg" id="redobutton" />
+            <img src="images/help.svg" id="help" />
+        </div>
 		<div id="helptext" class="popup hidden">
 			<div style="text-decoration: underline">Instructions</div><br>
 			Create Nodes:<br>
@@ -30,13 +36,13 @@
 			Manipulate Nodes:<br>
 			<ul>
 				<li>Drag nodes across the screen to move them</li>
-				<li>Tap nodes to bring up their parameters</li>
-					<ul><li>Tap/Drag parameters to change them</li></ul>
+				<li>Tap nodes to bring up their parameters
+					<ul><li>Tap/Drag parameters to change them</li></ul></li>
 			</ul>
 			Link Nodes:<br>
 			<ul>
-				<li>Long-press and then drag from one node to another node to create a connection</li>
-					<ul><li>Start at output, drag to input</li></ul>
+				<li>Long-press and then drag from one node to another node to create a connection
+					<ul><li>Start at output, drag to input</li></ul></li>
 			</ul>
 		</div>
 		<div id="workspaceWrapper"><div id="workspace"></div></div>

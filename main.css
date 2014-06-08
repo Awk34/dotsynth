@@ -14,10 +14,15 @@ body p {
     font-size: 5em;
     margin-top: 0;
 }
-#help {
+#menu-right {
     position: absolute;
-    right: 2%;
-    color: #006;
+    right: 0;
+    margin: 1mm;
+}
+#menu-right * {
+    margin: 0 1mm 0 1mm;
+    width: 3em;
+    height: 3em;
 }
 #logo {
     width: 33mm;
