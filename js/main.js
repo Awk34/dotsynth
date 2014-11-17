@@ -9,15 +9,31 @@ var context = new AudioContext();
 // for help menu box, toggles display on/off
 function toggle(obj) {
     var e = document.getElementById(obj);
-    if(e.style.display == 'none')
+    if (e.style.display == 'none')
         e.style.display = '';
     else
         e.style.display = 'none';
 }
-addListeners(document.getElementById("helptext"), {onTapEnd: function() { document.getElementById("helptext").classList.toggle('hidden') }});
-addListeners(document.getElementById("help"), {onTapEnd: function() { document.getElementById("helptext").classList.toggle('hidden') }});
-addListeners(document.getElementById("undobutton"), {onTapEnd: function() { undo() }});
-addListeners(document.getElementById("redobutton"), {onTapEnd: function() { redo() }});
+addListeners(document.getElementById("helptext"), {
+    onTapEnd: function () {
+        document.getElementById("helptext").classList.toggle('hidden')
+    }
+});
+addListeners(document.getElementById("help"), {
+    onTapEnd: function () {
+        document.getElementById("helptext").classList.toggle('hidden')
+    }
+});
+addListeners(document.getElementById("undobutton"), {
+    onTapEnd: function () {
+        undo()
+    }
+});
+addListeners(document.getElementById("redobutton"), {
+    onTapEnd: function () {
+        redo()
+    }
+});
 //addListeners(document.getElementById("eraserbutton"), {onTapEnd: function() { /*TODO*/ }});
 
 function Action(context, type) {
@@ -27,11 +43,11 @@ function Action(context, type) {
 
 //take proper action to undo latest Action on the undoStack, push all this info to redoStack
 function undo() {
-    if(undoStack.length == 0) return;
+    if (undoStack.length == 0) return;
     var thisAction = undoStack.pop();
     //console.log("Undoing "+thisAction);
 
-    switch(thisAction.type) {
+    switch (thisAction.type) {
         case "create":
             redoStack.push(thisAction);
             /* note: there won't be any connections to break yet,
@@ -42,26 +58,29 @@ function undo() {
             //replace dot
             var tmpDot = new Dot(thisAction.context.definition, thisAction.context.x, thisAction.context.y);
             undoStack.pop();
-            for(var i=0; i<thisAction.context.arcs.length; i++) {
+            for (var i = 0; i < thisAction.context.arcs.length; i++) {
                 tmpDot.arcs[i].invModifyValue(thisAction.context.node[tmpDot.arcs[i].definition.name].value);
             }
 
             //reconnect connections
             var length = thisAction.context.connections.length;
-            for(var i=0; i < length; i++) {
+            for (i = 0; i < length; i++) {
                 //TODO
                 //if this dot is the output for this connection
-                if(thisAction.context.connections[i].thisSource == thisAction.context) {
-                    var tmpConn = new Connection(tmpDot);
+                var tmpConn;
+                if (thisAction.context.connections[i].thisSource == thisAction.context) {
+                    tmpConn = new Connection(tmpDot);
                     undoStack.pop();
                     tmpConn.finalize(thisAction.context.connections[i].thisDest.centerElement);
                 }
                 //else, this dot is the input for this connection
-                else if(thisAction.context.connections[i].thisDest == thisAction.context) {
-                    var tmpConn = new Connection(thisAction.context.connections[i].thisSource);
+                else if (thisAction.context.connections[i].thisDest == thisAction.context) {
+                    tmpConn = new Connection(thisAction.context.connections[i].thisSource);
                     undoStack.pop();
                     tmpConn.finalize(tmpDot.centerElement);
-                } else {console.log("uh oh")}
+                } else {
+                    console.log("uh oh")
+                }
             }
             redoStack.push(thisAction);
             break;
@@ -82,23 +101,25 @@ function undo() {
 //TODO
 //redo whatever action is latest on the redoStack
 function redo() {
-    if(redoStack.length == 0) return;
+    if (redoStack.length == 0) return;
     var thisAction = redoStack.pop();
 
-    switch(thisAction.type) {
+    switch (thisAction.type) {
         case "create":
-            if(thisAction.context instanceof Dot) {
+            if (thisAction.context instanceof Dot) {
                 //replace dot
                 new Dot(thisAction.context.definition, thisAction.context.x, thisAction.context.y);
                 //^This will push it's creation to the undoStack
 
                 //there should be no connections to recreate
-                if(thisAction.context.connections.length > 0) console.log("whoops, there WERE connections"); //this shouldn't happen
-            } else {console.log("Unimplemented recreate")}
+                if (thisAction.context.connections.length > 0) console.log("whoops, there WERE connections"); //this shouldn't happen
+            } else {
+                console.log("Unimplemented recreate")
+            }
             break;
         case "delete":
             undoStack.push(thisAction);
-            del(dotList[dotList.length-1]);
+            del(dotList[dotList.length - 1]);
             break;
         case "connect":
             undoStack.push(thisAction);
@@ -117,29 +138,31 @@ function redo() {
 }
 
 function del(obj) {
-    if(obj instanceof Dot) {
+    if (obj instanceof Dot) {
         dotList.splice(dotList.indexOf(obj), 1);
         obj.svgElement.remove();
-        for(var i=0; i<obj.connections.length; i++) {
+        for (var i = 0; i < obj.connections.length; i++) {
             //remove connections from the connected dot's connections[]
-            if(obj.connections[i].thisSource == obj) {
+            if (obj.connections[i].thisSource == obj) {
                 obj.connections[i].thisSource.node.disconnect(obj.connections[i].thisDest.node);
                 obj.connections[i].thisDest.connections.splice(obj.connections[i].thisDest.connections.indexOf(obj.connections[i]), 1);
-            } else if(obj.connections[i].thisDest == obj) {
+            } else if (obj.connections[i].thisDest == obj) {
                 obj.connections[i].thisSource.node.disconnect(obj.connections[i].thisDest.node);
                 obj.connections[i].thisSource.connections.splice(obj.connections[i].thisSource.connections.indexOf(obj.connections[i]), 1);
-            } else {console.log("something went wrong (del(Dot))")}
+            } else {
+                console.log("something went wrong (del(Dot))")
+            }
             //delete the connection's SVG
             obj.connections[i].svgElement.remove();
         }
         Physics.remove(obj);
         updateArcsClipPath();
-    } else if(obj instanceof Connection) {
+    } else if (obj instanceof Connection) {
         obj.svgElement.remove();
         obj.thisSource.node.disconnect(obj.thisDest.node);
         obj.thisSource.connections.splice(obj.thisSource.connections.indexOf(obj), 1);
         obj.thisDest.connections.splice(obj.thisDest.connections.indexOf(obj), 1);
-    } else if(obj instanceof undefined) {
+    } else if (obj instanceof undefined) {
         console.log("Object for deletion is undefined");
     } else {
         console.log("Unimplemented deletion");

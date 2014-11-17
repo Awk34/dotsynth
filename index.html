@@ -1,50 +1,59 @@
 <!doctype html>
 <html>
-	<head>
-		<title>.synth</title>
-		<link rel="stylesheet" href="main.css">
-		<link rel="icon" type="image/png" href="dotsynth_favicon_64.png">
-		<script src="js/globals.js" defer></script>
-		<script src="js/eventhelper.js" defer></script>
-		<script src="js/nodes.js" defer></script>
-		<script src="js/newdotmenu.js" defer></script>
-		<script src="js/connection.js" defer></script>
-		<script src="js/dot.js" defer></script>
-		<script src="js/physics.js" defer></script>
-		<script src="js/workspace.js" defer></script>
-		<script src="js/style.js" defer></script>
-		<script src="js/main.js" defer></script>
-		<meta name="viewport" content="width=device-width, user-scalable=no">
-		<meta name="mobile-web-app-capable" content="yes">
-	</head>
-	<body>
-		<img src="dotsynth_logo_white.png" id="logo">
-        <!--To be replaced by a .svg image-->
-        <div id="menu-right">
-            <!--<img src="images/eraser.svg" id="eraserbutton" />-->
-            <img src="images/undo.svg" id="undobutton" />
-            <img src="images/redo.svg" id="redobutton" />
-            <img src="images/help.svg" id="help" />
-        </div>
-		<div id="helptext" class="popup hidden">
-			<div style="text-decoration: underline">Instructions</div><br>
-			Create Nodes:<br>
-			<ul>
-				<li>Hold blank screen space to bring up the new node menu</li>
-				<li>Tap a node on the menu to place it</li>
-			</ul>
-			Manipulate Nodes:<br>
-			<ul>
-				<li>Drag nodes across the screen to move them</li>
-				<li>Tap nodes to bring up their parameters
-					<ul><li>Tap/Drag parameters to change them</li></ul></li>
-			</ul>
-			Link Nodes:<br>
-			<ul>
-				<li>Long-press and then drag from one node to another node to create a connection
-					<ul><li>Start at output, drag to input</li></ul></li>
-			</ul>
-		</div>
-		<div id="workspaceWrapper"><div id="workspace"></div></div>
-	</body>
+<head>
+    <title>.synth</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="icon" type="image/png" href="dotsynth_favicon_64.png">
+    <script src="js/globals.js" defer></script>
+    <script src="js/eventhelper.js" defer></script>
+    <script src="js/nodes.js" defer></script>
+    <script src="js/newdotmenu.js" defer></script>
+    <script src="js/connection.js" defer></script>
+    <script src="js/dot.js" defer></script>
+    <script src="js/physics.js" defer></script>
+    <script src="js/workspace.js" defer></script>
+    <script src="js/style.js" defer></script>
+    <script src="js/main.js" defer></script>
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+</head>
+<body>
+<img src="dotsynth_logo_white.png" id="logo">
+<!--To be replaced by a .svg image-->
+<div id="menu-right">
+    <!--<img src="images/eraser.svg" id="eraserbutton" />-->
+    <img src="images/undo.svg" id="undobutton"/>
+    <img src="images/redo.svg" id="redobutton"/>
+    <img src="images/help.svg" id="help"/>
+</div>
+<div id="helptext" class="popup hidden">
+    <div style="text-decoration: underline">Instructions</div>
+    <br>
+    Create Nodes:<br>
+    <ul>
+        <li>Hold blank screen space to bring up the new node menu</li>
+        <li>Tap a node on the menu to place it</li>
+    </ul>
+    Manipulate Nodes:<br>
+    <ul>
+        <li>Drag nodes across the screen to move them</li>
+        <li>Tap nodes to bring up their parameters
+            <ul>
+                <li>Tap/Drag parameters to change them</li>
+            </ul>
+        </li>
+    </ul>
+    Link Nodes:<br>
+    <ul>
+        <li>Long-press and then drag from one node to another node to create a connection
+            <ul>
+                <li>Start at output, drag to input</li>
+            </ul>
+        </li>
+    </ul>
+</div>
+<div id="workspaceWrapper">
+    <div id="workspace"></div>
+</div>
+</body>
 </html>
